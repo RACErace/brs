@@ -346,5 +346,5 @@ def main():
 
 main()
 
-# 运行主循环
+
 root.mainloop()
