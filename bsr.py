@@ -25,7 +25,7 @@ with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
     config = parse(f.read())
 
 
-# 创建主窗口
+# 创建主窗
 root = tk.Tk()
 root.title("BSR")
 # 告诉操作系统使用程序自身的dpi适配
