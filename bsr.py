@@ -9,7 +9,7 @@ import sys
 from paddleocr import PaddleOCR
 from tomlkit import loads, dumps, parse
 
-# start "C:\Program Files\Star Rail\Game\StarRail.exe"
+
 subprocess.Popen(r'C:\Program Files\Star Rail\Game\StarRail.exe', shell=True)
 
 # 初始化OCR引擎
