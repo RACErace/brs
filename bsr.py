@@ -15,7 +15,7 @@ subprocess.Popen(r'C:\Program Files\Star Rail\Game\StarRail.exe', shell=True)
 
 ocr = PaddleOCR(use_angle_cls=True, lang='ch',
                 use_gpu=True, show_log=False)
-
+# 配置
 slice = {'horizontal_stride': 300, 'vertical_stride': 500,
          'merge_x_thres': 50, 'merge_y_thres': 35}
 
