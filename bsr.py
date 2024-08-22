@@ -10,6 +10,7 @@ from paddleocr import PaddleOCR
 from tomlkit import loads, dumps, parse
 import os
 import psutil
+import pyperclip
 
 
 # 读取TOML文件
@@ -193,7 +194,9 @@ def log_in(account: str, password: str) -> None:
     # 输入密码
     [(x, y)] = results.get('输入密码')
     pyautogui.click(x, y)
-    pyautogui.typewrite(password)
+    time.sleep(1)
+    pyperclip.copy(password)
+    pyautogui.hotkey('ctrl', 'v')
     time.sleep(3)
     # 同意《用户协议》和《隐私政策》
     x, y = pyautogui.locateCenterOnScreen(r'img\accept.png', confidence=0.8)
