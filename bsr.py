@@ -99,14 +99,22 @@ output_text.pack(fill=tk.BOTH, expand=True)
 
 
 # my_ocr
-def my_ocr() -> dict:
+def my_ocr() -> dict[str: list]:
     # 截图
     pyautogui.moveTo(1, 1)
-    screenshot = pyautogui.screenshot()
-    screenshot.save('screenshot.png')
-    # 执行OCR
-    result0 = ocr.ocr('screenshot.png', cls=True)
-    result1 = ocr.ocr('screenshot.png', cls=True, slice=slice)
+    while True:
+        screenshot = pyautogui.screenshot()
+        screenshot.save('screenshot.png')
+        # 执行OCR
+        result0 = ocr.ocr('screenshot.png', cls=True)
+        try:
+            result1 = ocr.ocr('screenshot.png', cls=True, slice=slice)
+        except:
+            result1 = [None]
+        if result0[0] and result1[0]:
+            break
+        else:
+            time.sleep(1)
     results = {}
     res = result0[0]
     for line in res:
@@ -143,7 +151,7 @@ def my_ocr() -> dict:
 
 
 # my_click
-def my_click(target: str) -> dict:
+def my_click(target: str) -> dict[str: list]:
     output_text.insert(tk.END, f'点击{target}\n')
     output_text.yview_moveto(1)
     output_text.update()
@@ -166,7 +174,13 @@ def return_to_the_login_interface():
     output_text.insert(tk.END, '准备退出游戏\n')
     pyautogui.hotkey('esc')
     time.sleep(3)
-    x, y = pyautogui.locateCenterOnScreen(r'img\exit.png', confidence=0.8)
+    while True:
+        try:
+            x, y = pyautogui.locateCenterOnScreen(
+                r'img\exit.png', confidence=0.8)
+            break
+        except:
+            time.sleep(1)
     pyautogui.moveTo(x, y)
     time.sleep(1)
     pyautogui.click()
@@ -199,7 +213,13 @@ def log_in(account: str, password: str) -> None:
     pyautogui.hotkey('ctrl', 'v')
     time.sleep(3)
     # 同意《用户协议》和《隐私政策》
-    x, y = pyautogui.locateCenterOnScreen(r'img\accept.png', confidence=0.8)
+    while True:
+        try:
+            x, y = pyautogui.locateCenterOnScreen(
+                r'img\accept.png', confidence=0.8)
+            break
+        except:
+            time.sleep(1)
     pyautogui.moveTo(x, y)
     time.sleep(1)
     pyautogui.click()
@@ -284,8 +304,14 @@ def task():
                     [(x, y)] = results.get('侵蚀隧洞')
                     pyautogui.click(x, y)
                 else:
-                    x, y = pyautogui.locateCenterOnScreen(
-                        r'img\Survival_Index.png', confidence=0.8)
+                    while True:
+                        try:
+                            x, y = pyautogui.locateCenterOnScreen(
+                                r'img\Survival_Index.png', confidence=0.8)
+                            pyautogui.click(x, y)
+                            break
+                        except:
+                            time.sleep(1)
                     pyautogui.moveTo(x, y)
                     time.sleep(1)
                     pyautogui.click()
@@ -347,6 +373,17 @@ def task():
     Cavern_Relic_Sets()
 
 
+# Daily_Training
+def Daily_Training():
+    pyautogui.hotkey('f4')
+    time.sleep(3)
+    my_click('400')
+    time.sleep(3)
+    pyautogui.click()
+    time.sleep(3)
+    pyautogui.hotkey('esc')
+
+
 def main():
     try:
         output_text.insert(tk.END, '已启动\n')
@@ -367,6 +404,8 @@ def main():
             output_text.yview_moveto(1)
             output_text.update()
             task()
+            time.sleep(10)
+            Daily_Training()
             break
         # time.sleep(18)
         # close_the_game()
