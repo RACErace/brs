@@ -8,9 +8,55 @@ import pyautogui
 import sys
 from paddleocr import PaddleOCR
 from tomlkit import loads, dumps, parse
+import os
+import psutil
 
 
-subprocess.Popen(r'C:\Program Files\Star Rail\Game\StarRail.exe', shell=True)
+# 读取TOML文件
+try:
+    with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+        config = parse(f.read())
+except FileNotFoundError:
+    sys.exit('没有找到配置文件！')
+
+
+def find_game_path():
+    # 获取存在的磁盘
+    partitions = psutil.disk_partitions()
+    drives = [partition.device for partition in partitions]
+
+    # 查找文件
+    def find_file(root_folder):
+        for dirpath, dirnames, filenames in os.walk(root_folder):
+            if "StarRail.exe" in filenames:
+                return os.path.join(dirpath, "StarRail.exe")
+        return None
+
+    for drive in drives:
+        game_path = find_file(drive)
+        if game_path:
+            break
+
+    if game_path:
+        subprocess.Popen(game_path, shell=True)
+        config['game_path'] = game_path
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(dumps(config))
+    else:
+        sys.exit('没有找到游戏路径！')
+
+
+# 获取游戏路径
+game_path = config.get('game_path')
+if game_path:
+    # 检查游戏路径是否存在
+    if os.path.exists(game_path):
+        subprocess.Popen(game_path, shell=True)
+    else:
+        find_game_path()
+else:
+    find_game_path()
+
 
 # 初始化OCR引擎
 ocr = PaddleOCR(use_angle_cls=True, lang='ch',
@@ -18,11 +64,6 @@ ocr = PaddleOCR(use_angle_cls=True, lang='ch',
 # OCR设置
 slice = {'horizontal_stride': 300, 'vertical_stride': 500,
          'merge_x_thres': 50, 'merge_y_thres': 35}
-
-
-# 读取TOML文件
-with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
-    config = parse(f.read())
 
 
 # 创建主窗口
@@ -166,14 +207,9 @@ def log_in(account: str, password: str) -> None:
 
 # 点击领取今日补给
 def Express_Supply_Pass():
-    results = my_ocr()
-    if '点击领取今日补给' in results:
-        [(x, y)] = results.get('点击领取今日补给')
-        pyautogui.click(x, y)
-        time.sleep(5)
-        pyautogui.click(x, y)
-    else:
-        pass
+    pyautogui.click()
+    time.sleep(5)
+    pyautogui.click()
 
 
 # 登出
