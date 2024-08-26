@@ -8,7 +8,7 @@ import traceback
 import pyautogui
 import sys
 from paddleocr import PaddleOCR
-from tomlkit import loads, dumps, parse
+from tomlkit import dumps, parse
 import os
 import psutil
 import pyperclip
@@ -285,8 +285,10 @@ def task():
             times = task_Cavern_Relic_Sets[Relic_Sets_name[0]
                                            ] + task_Cavern_Relic_Sets[Relic_Sets_name[1]]
             task_Cavern_of_Corrosion[Corrosion_name] = times
-
+        my_exit = 0
         for name, times in task_Cavern_of_Corrosion.items():
+            if my_exit == 1:
+                break
             if times != 0:
                 # 打开星际和平指南
                 output_text.insert(tk.END, '打开星际和平指南\n')
@@ -351,7 +353,6 @@ def task():
                 my_click_text('挑战')
                 time.sleep(3)
                 my_click_text('开始挑战')
-                my_exit = 0
                 for i in range(times):
                     if my_exit == 1:
                         break
@@ -362,6 +363,7 @@ def task():
                             if i == times - 1:
                                 [(x, y)] = results.get('退出关卡')
                                 pyautogui.click(x, y)
+                                time.sleep(10)
                                 break
                             else:
                                 for text in results.keys():
@@ -406,7 +408,10 @@ def Calyx_Golden():
                   '回忆之蕾·匹诺康尼': 0,
                   '以太之蕾·匹诺康尼': 0,
                   '藏珍之蕾·匹诺康尼': 0}
+    my_exit = 0
     for name, times in task_Calyx.items():
+        if my_exit == 1:
+            break
         if times != 0:
             # 打开星际和平指南
             output_text.insert(tk.END, '打开星际和平指南\n')
@@ -482,6 +487,7 @@ def Calyx_Golden():
                     if '退出关卡' in results:
                         [(x, y)] = results.get('退出关卡')
                         pyautogui.click(x, y)
+                        my_exit = 1
                         break
                     else:
                         time.sleep(5)
@@ -506,6 +512,7 @@ def Calyx_Golden():
                             if i == times - 1:
                                 [(x, y)] = results.get('退出关卡')
                                 pyautogui.click(x, y)
+                                time.sleep(10)
                                 break
                             else:
                                 for text in results.keys():
