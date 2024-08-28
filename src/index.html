@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name=" viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetterSR</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="user">
+                <div class="account" onclick="showContent('userpage', event)">15386547437</div>
+                <div class="change" onclick="showContent('changepage', event)">&#8644</div>
+            </div>
+            <div class="select-area">
+                <!-- Sidebar items -->
+                <div class="sidebar-item" onclick="showContent('content1', event)">Item 1</div>
+                <div class="sidebar-item" onclick="showContent('content2', event)">Item 2</div>
+                <div class="sidebar-item" onclick="showContent('content3', event)">Item 3</div>
+                <div class="sidebar-item" onclick="showContent('content4', event)">Item 4</div>
+                <!-- Add more items as needed -->
+            </div>
+        </div>
+        <div class="main-content">
+            <!-- Main content items -->
+            <div id="userpage" class="content-page">
+                <div class="content-item">userpage</div>
+            </div>
+            <div id="changepage" class="content-page">
+                <div class="account-num" onclick="changeAccount(event)">15386547437</div>
+                <div class="account-num" onclick="changeAccount(event)">17780214296</div>
+            </div>
+            <div id="content1" class="content-page">
+                <div class="content-item">Content for Item 1</div>
+            </div>
+            <div id="content2" class="content-page">
+                <div class="content-item">Content for Item 2</div>
+            </div>
+            <div id="content3" class="content-page">
+                <div class="content-item">Content for Item 3</div>
+            </div>
+            <div id="content4" class="content-page">
+                <div class="content-item">Content for Item 4</div>
+            </div>
+            <!-- Add more content items as needed -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

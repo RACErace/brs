@@ -1,0 +1,108 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 200px;
+    /* Set the width of the sidebar */
+    background-color: #eee;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-item {
+    background-color: #ccc;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user {
+    background-color: #ddd;
+    display: flex;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    justify-content: space-between;
+}
+
+.change {
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.change:hover {
+    background-color: #aaa;
+}
+
+.select-area {
+    background-color: #ddd;
+    flex-grow: 1;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.sidebar-item:hover {
+    background-color: #bbb;
+}
+
+.sidebar-item.active {
+    background-color: #aaa;
+    font-weight: bold;
+}
+
+.main-content {
+    flex-grow: 1;
+    /* Take up remaining space */
+    padding: 20px;
+    background-color: #fff;
+}
+
+.content-page {
+    background-color: #fff;
+    display: flex;
+}
+
+.content-item {
+    background-color: #eee;
+    margin: 10px 5px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.account-num {
+    background-color: #eee;
+    margin: 10px 5px;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.account-num:hover {
+    background-color: #bbb;
+}
+
+/* styles.css */
+
+.content-page {
+    display: none;
+}
+
+/* 默认显示第一个内容项 */
+#userpage {
+    display: flex;
+}
