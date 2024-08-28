@@ -427,8 +427,10 @@ def Planar_Ornaments():
         times = task_Planar_Ornaments[plannar_name[0]
                                       ] + task_Planar_Ornaments[plannar_name[1]]
         task_diffenrential_universe[universe_name] = times
-
+    my_exit = 0
     for name, times in task_diffenrential_universe.items():
+        if my_exit == 1:
+            break
         if times != 0:
             # 打开星际和平指南
             output_text.insert(tk.END, '打开星际和平指南\n')
@@ -439,17 +441,25 @@ def Planar_Ornaments():
             # 检查是否在生存索引界面
             results = my_ocr()
             if '生存索引' in results:
-                [(x, y)] = results.get('饰品提取')
-                pyautogui.click(x, y)
+                for text in results.keys():
+                    match = re.search(r'(\d+)/240', text)
+                    if match:
+                        Trailblaze_Power = int(match.group(1))
+                        break
             else:
-                x, y = pyautogui.locateCenterOnScreen(
-                    r'img\Survival_Index.png', confidence=0.8)
-                pyautogui.moveTo(x, y)
-                time.sleep(1)
-                pyautogui.click()
+                my_click_img('Survival_Index')
                 time.sleep(3)
-                my_click_text('饰品提取')
-            time.sleep(3)
+                results = my_ocr()
+                for text in results.keys():
+                    match = re.search(r'(\d+)/240', text)
+                    if match:
+                        Trailblaze_Power = int(match.group(1))
+                        break
+            if Trailblaze_Power < 40:
+                pyautogui.hotkey('esc')
+                break
+            [(x, y)] = results.get('饰品提取')
+            pyautogui.click(x, y)
             # 查找正确的“传送”标签
             while True:
                 results = my_ocr()
@@ -496,9 +506,20 @@ def Planar_Ornaments():
                             time.sleep(10)
                             break
                         else:
-                            [(x, y)] = results.get('再来一次')
-                            pyautogui.click(x, y)
-                            break
+                            for text in results.keys():
+                                match = re.search(r'(\d+)/240', text)
+                                if match:
+                                    Trailblaze_Power = int(match.group(1))
+                                    break
+                            if Trailblaze_Power >= 40:
+                                [(x, y)] = results.get('再来一次')
+                                pyautogui.click(x, y)
+                                break
+                            else:
+                                [(x, y)] = results.get('退出关卡')
+                                pyautogui.click(x, y)
+                                my_exit = 1
+                                break
                     else:
                         time.sleep(5)
 
