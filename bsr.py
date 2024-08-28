@@ -1,3 +1,4 @@
+import re
 import subprocess
 import time
 import ctypes
@@ -7,10 +8,57 @@ import traceback
 import pyautogui
 import sys
 from paddleocr import PaddleOCR
-from tomlkit import loads, dumps, parse
+from tomlkit import dumps, parse
+import os
+import psutil
+import pyperclip
 
-# start "C:\Program Files\Star Rail\Game\StarRail.exe"
-subprocess.Popen(r'C:\Program Files\Star Rail\Game\StarRail.exe', shell=True)
+
+# 读取TOML文件
+try:
+    with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+        config = parse(f.read())
+except FileNotFoundError:
+    sys.exit('没有找到配置文件！')
+
+
+def find_game_path():
+    # 获取存在的磁盘
+    partitions = psutil.disk_partitions()
+    drives = [partition.device for partition in partitions]
+
+    # 查找文件
+    def find_file(root_folder):
+        for dirpath, dirnames, filenames in os.walk(root_folder):
+            if "StarRail.exe" in filenames:
+                return os.path.join(dirpath, "StarRail.exe")
+        return None
+
+    for drive in drives:
+        game_path = find_file(drive)
+        if game_path:
+            break
+
+    if game_path:
+        subprocess.Popen(game_path, shell=True)
+        config['game_path'] = game_path
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(dumps(config))
+    else:
+        sys.exit('没有找到游戏路径！')
+
+
+# 获取游戏路径
+game_path = config.get('game_path')
+if game_path:
+    # 检查游戏路径是否存在
+    if os.path.exists(game_path):
+        subprocess.Popen(game_path, shell=True)
+    else:
+        find_game_path()
+else:
+    find_game_path()
+
 
 # 初始化OCR引擎
 ocr = PaddleOCR(use_angle_cls=True, lang='ch',
@@ -18,11 +66,6 @@ ocr = PaddleOCR(use_angle_cls=True, lang='ch',
 # OCR设置
 slice = {'horizontal_stride': 300, 'vertical_stride': 500,
          'merge_x_thres': 50, 'merge_y_thres': 35}
-
-
-# 读取TOML文件
-with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
-    config = parse(f.read())
 
 
 # 创建主窗口
@@ -57,14 +100,22 @@ output_text.pack(fill=tk.BOTH, expand=True)
 
 
 # my_ocr
-def my_ocr() -> dict:
+def my_ocr() -> dict[str: list]:
     # 截图
     pyautogui.moveTo(1, 1)
-    screenshot = pyautogui.screenshot()
-    screenshot.save('screenshot.png')
-    # 执行OCR
-    result0 = ocr.ocr('screenshot.png', cls=True)
-    result1 = ocr.ocr('screenshot.png', cls=True, slice=slice)
+    while True:
+        screenshot = pyautogui.screenshot()
+        screenshot.save('screenshot.png')
+        # 执行OCR
+        result0 = ocr.ocr('screenshot.png', cls=True)
+        try:
+            result1 = ocr.ocr('screenshot.png', cls=True, slice=slice)
+        except:
+            result1 = [None]
+        if result0[0] and result1[0]:
+            break
+        else:
+            time.sleep(1)
     results = {}
     res = result0[0]
     for line in res:
@@ -87,7 +138,7 @@ def my_ocr() -> dict:
         if text in results:
             i = 0
             for (x0, y0) in results[text]:
-                if (x0-x)**2 + (y0-y)**2 > 650:
+                if (x0-x)**2 + (y0-y)**2 > 800:
                     i += 1
                 else:
                     break
@@ -101,7 +152,7 @@ def my_ocr() -> dict:
 
 
 # my_click
-def my_click(target: str) -> dict:
+def my_click_text(target: str) -> dict[str: list]:
     output_text.insert(tk.END, f'点击{target}\n')
     output_text.yview_moveto(1)
     output_text.update()
@@ -119,46 +170,55 @@ def my_click(target: str) -> dict:
     return results
 
 
+def my_click_img(target: str) -> None:
+    while True:
+        try:
+            x, y = pyautogui.locateCenterOnScreen(
+                f'img\\{screen_width}_{screen_height}\\{target}.png', confidence=0.8)
+            pyautogui.moveTo(x, y)
+            time.sleep(1)
+            pyautogui.click()
+            break
+        except:
+            time.sleep(1)
+
+
 # return_to_the_login_interface
 def return_to_the_login_interface():
     output_text.insert(tk.END, '准备退出游戏\n')
     pyautogui.hotkey('esc')
     time.sleep(3)
-    x, y = pyautogui.locateCenterOnScreen(r'img\exit.png', confidence=0.8)
-    pyautogui.moveTo(x, y)
+    my_click_img('exit')
     time.sleep(1)
-    pyautogui.click()
-    time.sleep(1)
-    my_click('确认')
+    my_click_text('确认')
 
 
 # start
 def start():
-    my_click('开始游戏')
+    my_click_text('开始游戏')
 
 
 # 进入
 def enter():
-    my_click('点击进入')
+    my_click_text('点击进入')
 
 
 # 登入
 def log_in(account: str, password: str) -> None:
-    my_click('mi账号密码')
+    my_click_text('mi账号密码')
     # 输入账号
-    results = my_click('输入手机号/邮箱')
+    results = my_click_text('输入手机号/邮箱')
     pyautogui.typewrite(account)
     time.sleep(3)
     # 输入密码
     [(x, y)] = results.get('输入密码')
     pyautogui.click(x, y)
-    pyautogui.typewrite(password)
+    time.sleep(1)
+    pyperclip.copy(password)
+    pyautogui.hotkey('ctrl', 'v')
     time.sleep(3)
     # 同意《用户协议》和《隐私政策》
-    x, y = pyautogui.locateCenterOnScreen(r'img\accept.png', confidence=0.8)
-    pyautogui.moveTo(x, y)
-    time.sleep(1)
-    pyautogui.click()
+    my_click_img('accept')
     time.sleep(1)
     [(x, y)] = results.get('进入游戏')
     pyautogui.click(x, y)
@@ -166,26 +226,21 @@ def log_in(account: str, password: str) -> None:
 
 # 点击领取今日补给
 def Express_Supply_Pass():
-    results = my_ocr()
-    if '点击领取今日补给' in results:
-        [(x, y)] = results.get('点击领取今日补给')
-        pyautogui.click(x, y)
-        time.sleep(5)
-        pyautogui.click(x, y)
-    else:
-        pass
+    pyautogui.click()
+    time.sleep(5)
+    pyautogui.click()
 
 
 # 登出
 def log_out():
-    my_click('登出')
-    my_click('确定')
+    my_click_text('登出')
+    my_click_text('确定')
 
 
 # 退出
 def close_the_game():
-    my_click('退出')
-    my_click('确定')
+    my_click_text('退出')
+    my_click_text('确定')
 
 
 # 任务
@@ -203,7 +258,7 @@ def task():
                                '梦潜之径·侵蚀隧洞': ['死水深潜的先驱', '机心戏梦的钟表匠'],
                                '勇骑之径·侵蚀隧洞': ['荡除蠹灾的铁骑', '风举云飞的勇烈']}
 
-        task_Cavern_Relic_Sets = {'密林卧雪的猎人': 1,
+        task_Cavern_Relic_Sets = {'密林卧雪的猎人': 0,
                                   '晨昏交界的翔鹰': 0,
                                   '街头出身的拳王': 0,
                                   '流星追迹的怪盗': 0,
@@ -218,7 +273,7 @@ def task():
                                   '宝命长存的莳者': 0,
                                   '骇域漫游的信使': 0,
                                   '毁烬焚骨的大公': 0,
-                                  '幽锁深牢的系囚': 1,
+                                  '幽锁深牢的系囚': 0,
                                   '死水深潜的先驱': 0,
                                   '机心戏梦的钟表匠': 0,
                                   '荡除蠹灾的铁骑': 0,
@@ -230,8 +285,10 @@ def task():
             times = task_Cavern_Relic_Sets[Relic_Sets_name[0]
                                            ] + task_Cavern_Relic_Sets[Relic_Sets_name[1]]
             task_Cavern_of_Corrosion[Corrosion_name] = times
-
+        my_exit = 0
         for name, times in task_Cavern_of_Corrosion.items():
+            if my_exit == 1:
+                break
             if times != 0:
                 # 打开星际和平指南
                 output_text.insert(tk.END, '打开星际和平指南\n')
@@ -242,17 +299,25 @@ def task():
                 # 检查是否在生存索引界面
                 results = my_ocr()
                 if '生存索引' in results:
-                    [(x, y)] = results.get('侵蚀隧洞')
-                    pyautogui.click(x, y)
+                    for text in results.keys():
+                        match = re.search(r'(\d+)/240', text)
+                        if match:
+                            Trailblaze_Power = int(match.group(1))
+                            break
                 else:
-                    x, y = pyautogui.locateCenterOnScreen(
-                        r'img\Survival_Index.png', confidence=0.8)
-                    pyautogui.moveTo(x, y)
-                    time.sleep(1)
-                    pyautogui.click()
+                    my_click_img('Survival_Index')
                     time.sleep(3)
-                    my_click('侵蚀隧洞')
-                time.sleep(3)
+                    results = my_ocr()
+                    for text in results.keys():
+                        match = re.search(r'(\d+)/240', text)
+                        if match:
+                            Trailblaze_Power = int(match.group(1))
+                            break
+                if Trailblaze_Power < 40:
+                    pyautogui.hotkey('esc')
+                    break
+                [(x, y)] = results.get('隧洞遗器')
+                pyautogui.click(x, y)
                 # 查找正确的“传送”标签
                 while True:
                     results = my_ocr()
@@ -270,7 +335,7 @@ def task():
                                     x0, y0 = x, y
                             if x0 == 0:
                                 pyautogui.moveTo(x1, y1)
-                                for _ in range(6):
+                                for _ in range(5):
                                     pyautogui.scroll(-1)
                                 time.sleep(3)
                                 results = my_ocr()
@@ -285,10 +350,12 @@ def task():
                             pyautogui.scroll(-1)
                         time.sleep(3)
                 time.sleep(10)
-                my_click('挑战')
+                my_click_text('挑战')
                 time.sleep(3)
-                my_click('开始挑战')
+                my_click_text('开始挑战')
                 for i in range(times):
+                    if my_exit == 1:
+                        break
                     time.sleep(60)  # 等待副本结束
                     while True:
                         results = my_ocr()
@@ -299,9 +366,20 @@ def task():
                                 time.sleep(10)
                                 break
                             else:
-                                [(x, y)] = results.get('再来一次')
-                                pyautogui.click(x, y)
-                                break
+                                for text in results.keys():
+                                    match = re.search(r'(\d+)/240', text)
+                                    if match:
+                                        Trailblaze_Power = int(match.group(1))
+                                        break
+                                if Trailblaze_Power >= 40:
+                                    [(x, y)] = results.get('再来一次')
+                                    pyautogui.click(x, y)
+                                    break
+                                else:
+                                    [(x, y)] = results.get('退出关卡')
+                                    pyautogui.click(x, y)
+                                    my_exit = 1
+                                    break
                         else:
                             time.sleep(5)
 
@@ -416,12 +494,186 @@ def task():
                             time.sleep(5)
 
     Planar_Ornaments()
+# Daily_Training
+def Daily_Training():
+    pyautogui.hotkey('f4')
+    time.sleep(3)
+    my_click_text('400')
+    time.sleep(3)
+    pyautogui.click()
+    time.sleep(3)
+    pyautogui.hotkey('esc')
+
+
+# 拟造花萼 (金)
+def Calyx_Golden():
+    task_Calyx = {'回忆之蕾·雅利洛-VI': 4,
+                  '以太之蕾·雅利洛-VI': 0,
+                  '藏珍之蕾·雅利洛-VI': 0,
+                  '回忆之蕾·仙舟「罗浮」': 0,
+                  '以太之蕾·仙舟「罗浮」': 0,
+                  '藏珍之蕾·仙舟「罗浮」': 0,
+                  '回忆之蕾·匹诺康尼': 0,
+                  '以太之蕾·匹诺康尼': 0,
+                  '藏珍之蕾·匹诺康尼': 0}
+    my_exit = 0
+    for name, times in task_Calyx.items():
+        if my_exit == 1:
+            break
+        if times != 0:
+            # 打开星际和平指南
+            output_text.insert(tk.END, '打开星际和平指南\n')
+            output_text.yview_moveto(1)
+            output_text.update()
+            pyautogui.hotkey('f4')
+            time.sleep(3)
+            # 检查是否在生存索引界面
+            results = my_ocr()
+            if '生存索引' in results:
+                for text in results.keys():
+                    match = re.search(r'(\d+)/240', text)
+                    if match:
+                        Trailblaze_Power = int(match.group(1))
+                        break
+            else:
+                my_click_img('Survival_Index')
+                time.sleep(3)
+                results = my_ocr()
+                for text in results.keys():
+                    match = re.search(r'(\d+)/240', text)
+                    if match:
+                        Trailblaze_Power = int(match.group(1))
+                        break
+            if Trailblaze_Power < 10:
+                pyautogui.hotkey('esc')
+                break
+            time.sleep(3)
+            [(x, y)] = results.get('拟造花萼 (金)')
+            pyautogui.click(x, y)
+            # 查找正确的“传送”标签
+            while True:
+                results = my_ocr()
+                # 检查是否存在要打的副本
+                if name in results:
+                    while True:
+                        # 获取副本名称坐标
+                        [(x1, y1)] = results.get(name)
+                        min = float('inf')
+                        # 初始化传送坐标
+                        x0, y0 = 0, 0
+                        for x, y in results.get('传送'):
+                            if y > y1 and abs(y - y1) < min:
+                                min = abs(y - y1)
+                                x0, y0 = x, y
+                        pyautogui.click(x0, y0)
+                        break
+                    break
+                else:
+                    match name:
+                        case '回忆之蕾·雅利洛-VI' | '以太之蕾·雅利洛-VI' | '藏珍之蕾·雅利洛-VI':
+                            my_click_img('Jarilo_VI')
+                        case '回忆之蕾·仙舟「罗浮」' | '以太之蕾·仙舟「罗浮」' | '藏珍之蕾·仙舟「罗浮」':
+                            my_click_img('Luofu')
+                        case '回忆之蕾·匹诺康尼' | '以太之蕾·匹诺康尼' | '藏珍之蕾·匹诺康尼':
+                            my_click_img('Penacony')
+                    time.sleep(3)
+            time.sleep(10)
+            results = my_ocr()
+            if 10 <= Trailblaze_Power <= 60:  # 体力不足60的情况
+                clicks = int(Trailblaze_Power / 10) - 1
+                [(x, y)] = results.get('+')
+                for _ in range(clicks):
+                    pyautogui.click(x, y)
+                    time.sleep(0.1)
+                [(x, y)] = results.get('挑战')
+                pyautogui.click(x, y)
+                time.sleep(3)
+                my_click_text('开始挑战')
+                time.sleep(Trailblaze_Power)  # 等待副本结束
+                while True:
+                    results = my_ocr()
+                    if '退出关卡' in results:
+                        [(x, y)] = results.get('退出关卡')
+                        pyautogui.click(x, y)
+                        my_exit = 1
+                        break
+                    else:
+                        time.sleep(5)
+            else:  # 体力大于60的情况
+                results = my_ocr()
+                [(x, y)] = results.get('+')
+                for _ in range(5):
+                    pyautogui.click(x, y)
+                    time.sleep(0.1)
+                [(x, y)] = results.get('挑战')
+                pyautogui.click(x, y)
+                time.sleep(3)
+                my_click_text('开始挑战')
+                my_exit = 0
+                for i in range(times):
+                    if my_exit == 1:
+                        break
+                    time.sleep(60)  # 等待副本结束
+                    while True:
+                        results = my_ocr()
+                        if '退出关卡' in results:
+                            if i == times - 1:
+                                [(x, y)] = results.get('退出关卡')
+                                pyautogui.click(x, y)
+                                time.sleep(10)
+                                break
+                            else:
+                                for text in results.keys():
+                                    match = re.search(r'(\d+)/240', text)
+                                    if match:
+                                        Trailblaze_Power = int(match.group(1))
+                                        break
+                                if Trailblaze_Power >= 60:
+                                    [(x, y)] = results.get('再来一次')
+                                    pyautogui.click(x, y)
+                                    break
+                                elif Trailblaze_Power >= 10:
+                                    [(x, y)] = results.get('退出关卡')
+                                    pyautogui.click(x, y)
+                                    time.sleep(10)
+                                    pyautogui.hotkey('f')
+                                    time.sleep(3)
+                                    clicks = int(Trailblaze_Power / 10) - 1
+                                    results = my_ocr()
+                                    [(x, y)] = results.get('+')
+                                    for _ in range(clicks):
+                                        pyautogui.click(x, y)
+                                        time.sleep(0.1)
+                                    [(x, y)] = results.get('挑战')
+                                    pyautogui.click(x, y)
+                                    time.sleep(3)
+                                    my_click_text('开始挑战')
+                                    time.sleep(Trailblaze_Power)  # 等待副本结束
+                                    while True:
+                                        results = my_ocr()
+                                        if '退出关卡' in results:
+                                            [(x, y)] = results.get('退出关卡')
+                                            pyautogui.click(x, y)
+                                            break
+                                        else:
+                                            time.sleep(5)
+                                    my_exit = 1
+                                    break
+                                else:
+                                    [(x, y)] = results.get('退出关卡')
+                                    pyautogui.click(x, y)
+                                    my_exit = 1
+                                    break
+                        else:
+                            time.sleep(5)
+
+
 def main():
     try:
         output_text.insert(tk.END, '已启动\n')
         output_text.yview_moveto(1)
         output_text.update()
-        for account, password in config.items():
+        for account, password in config['users'].items():
             time.sleep(18)
             log_out()
             log_in(account, password)
@@ -435,10 +687,12 @@ def main():
             output_text.insert(tk.END, '开始任务\n')
             output_text.yview_moveto(1)
             output_text.update()
-            task()
+            Calyx_Golden()
+            time.sleep(10)
+            return_to_the_login_interface()
+            time.sleep(10)
+            close_the_game()
             break
-        # time.sleep(18)
-        # close_the_game()
     except Exception as e:
         print('something wrong!')
         with open(r'doc\error.log', 'a', encoding='utf-8') as f:
