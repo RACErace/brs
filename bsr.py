@@ -243,6 +243,17 @@ def close_the_game():
     my_click_text('确定')
 
 
+# Daily_Training
+def Daily_Training():
+    pyautogui.hotkey('f4')
+    time.sleep(3)
+    my_click_text('400')
+    time.sleep(3)
+    pyautogui.click()
+    time.sleep(3)
+    pyautogui.hotkey('esc')
+
+
 # 隧洞遗器
 def Cavern_Relic_Sets():
     Cavern_of_Corrosion = {'霜风之径·侵蚀隧洞': ['密林卧雪的猎人', '晨昏交界的翔鹰'],
@@ -492,23 +503,6 @@ def Planar_Ornaments():
                         time.sleep(5)
 
 
-# 任务
-def task():
-    Cavern_Relic_Sets()
-    Planar_Ornaments()
-
-
-# Daily_Training
-def Daily_Training():
-    pyautogui.hotkey('f4')
-    time.sleep(3)
-    my_click_text('400')
-    time.sleep(3)
-    pyautogui.click()
-    time.sleep(3)
-    pyautogui.hotkey('esc')
-
-
 # 拟造花萼 (金)
 def Calyx_Golden():
     task_Calyx = {'回忆之蕾·雅利洛-VI': 4,
@@ -670,6 +664,12 @@ def Calyx_Golden():
                                     break
                         else:
                             time.sleep(5)
+
+
+# 任务
+def task():
+    Cavern_Relic_Sets()
+    Planar_Ornaments()
 
 
 def main():
