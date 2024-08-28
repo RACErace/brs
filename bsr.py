@@ -393,7 +393,7 @@ def Cavern_Relic_Sets():
                         time.sleep(5)
 
 
-# 位面饰品
+# 位面饰
 def Planar_Ornaments():
     diffenrential_universe = {'永恒笑剧': ['奔狼的都蓝王朝', '劫火莲灯铸炼宫'],
                               '伴你入眠': ['无主荒星茨冈尼亚', '出云显世与高天神国'],
