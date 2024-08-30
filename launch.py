@@ -4,6 +4,7 @@ import webview
 import tomlkit
 import json
 import subprocess
+import elevate
 
 
 class Api:
@@ -69,8 +70,7 @@ class Api:
                 f.write(tomlkit.dumps(self.config))
 
     def start(self):
-        # 利用多进程运行bsr.py
-        subprocess.Popen(['python', 'bsr.py'])
+        subprocess.Popen(['python', 'bsr.py'], shell=True)
 
 
 if __name__ == '__main__':
