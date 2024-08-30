@@ -679,7 +679,8 @@ def main():
         output_text.insert(tk.END, '已启动\n')
         output_text.yview_moveto(1)
         output_text.update()
-        for account, password in config['users'].items():
+        for account in config['users'].keys():
+            password = config['users'][account]['password']
             time.sleep(18)
             log_out()
             log_in(account, password)
