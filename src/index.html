@@ -6,46 +6,106 @@
     <meta name=" viewport" content="width=device-width, initial-scale=1.0">
     <title>BetterSR</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // 屏蔽右键点击
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+        });
+    </script>
 </head>
 
 <body>
     <div class="container">
         <div class="sidebar">
             <div class="user">
-                <div class="account" onclick="showContent('userpage', event)">15386547437</div>
-                <div class="change" onclick="showContent('changepage', event)">&#8644</div>
+                <div class="add-account" onclick="addAccount()">+</div>
+                <div class="show-account">
+                    <div class="account" onclick="showContent('userpage', event)"></div>
+                    <div class="change" onclick="showContent('changepage', event)">&#8644</div>
+                </div>
             </div>
             <div class="select-area">
-                <!-- Sidebar items -->
-                <div class="sidebar-item" onclick="showContent('content1', event)">Item 1</div>
-                <div class="sidebar-item" onclick="showContent('content2', event)">Item 2</div>
-                <div class="sidebar-item" onclick="showContent('content3', event)">Item 3</div>
-                <div class="sidebar-item" onclick="showContent('content4', event)">Item 4</div>
-                <!-- Add more items as needed -->
+                <div class="sidebar-item" onclick="showContent('Planar_Ornaments', event)">饰品提取</div>
+                <div class="sidebar-item" onclick="showContent('Calyx_Golden', event)">拟造花萼 (金)</div>
+                <div class="sidebar-item" onclick="showContent('Cavern_Relic_Sets', event)">侵蚀隧洞</div>
             </div>
         </div>
         <div class="main-content">
-            <!-- Main content items -->
             <div id="userpage" class="content-page">
-                <div class="content-item">userpage</div>
+                <div class="content-item" onclick="start()">开始</div>
             </div>
             <div id="changepage" class="content-page">
-                <div class="account-num" onclick="changeAccount(event)">15386547437</div>
-                <div class="account-num" onclick="changeAccount(event)">17780214296</div>
+                <div id="new-account" class="account-num" onclick="addAccount()">+</div>
             </div>
-            <div id="content1" class="content-page">
-                <div class="content-item">Content for Item 1</div>
+            <div id="Planar_Ornaments" class="content-page">
+                <div class="setting">
+                    <div class="add_task" onclick="addTask('Planar_Ornaments')">+</div>
+                    <div class="add_task" onclick="confirm(this)">确认</div>
+                </div>
+                <div class="select-box">
+                    <div id="奔狼的都蓝王朝" class="option" onclick="selectTask('奔狼的都蓝王朝')">奔狼的都蓝王朝</div>
+                    <div id="劫火莲灯铸炼宫" class="option" onclick="selectTask('劫火莲灯铸炼宫')">劫火莲灯铸炼宫</div>
+                    <div id="无主荒星茨冈尼亚" class="option" onclick="selectTask('无主荒星茨冈尼亚')">无主荒星茨冈尼亚</div>
+                    <div id="出云显世与高天神国" class="option" onclick="selectTask('出云显世与高天神国')">出云显世与高天神国</div>
+                    <div id="苍穹战线格拉默" class="option" onclick="selectTask('苍穹战线格拉默')">苍穹战线格拉默</div>
+                    <div id="梦想之地匹诺康尼" class="option" onclick="selectTask('梦想之地匹诺康尼')">梦想之地匹诺康尼</div>
+                    <div id="繁星竞技场" class="option" onclick="selectTask('繁星竞技场')">繁星竞技场</div>
+                    <div id="折断的龙骨" class="option" onclick="selectTask('折断的龙骨')">折断的龙骨</div>
+                    <div id="筑城者的贝洛伯格" class="option" onclick="selectTask('筑城者的贝洛伯格')">筑城者的贝洛伯格</div>
+                    <div id="停转的萨尔索图" class="option" onclick="selectTask('停转的萨尔索图')">停转的萨尔索图</div>
+                    <div id="泛银河商业公司" class="option" onclick="selectTask('泛银河商业公司')">泛银河商业公司</div>
+                    <div id="星体差分机" class="option" onclick="selectTask('星体差分机')">星体差分机</div>
+                    <div id="盗贼公国塔利亚" class="option" onclick="selectTask('盗贼公国塔利亚')">盗贼公国塔利亚</div>
+                    <div id="生命的翁瓦克" class="option" onclick="selectTask('生命的翁瓦克')">生命的翁瓦克</div>
+                    <div id="太空封印站" class="option" onclick="selectTask('太空封印站')">太空封印站</div>
+                    <div id="不老者的仙舟" class="option" onclick="selectTask('不老者的仙舟')">不老者的仙舟</div>
+                </div>
             </div>
-            <div id="content2" class="content-page">
-                <div class="content-item">Content for Item 2</div>
+            <div id="Calyx_Golden" class="content-page">
+                <div class="setting">
+                    <div class="add_task" onclick="addTask('Calyx_Golden')">+</div>
+                    <div class="add_task" onclick="confirm(this)">确认</div>
+                </div>
+                <div class="select-box">
+                    <div id="回忆之蕾·雅利洛-VI" class="option" onclick="selectTask('回忆之蕾·雅利洛-VI')">回忆之蕾·雅利洛-VI</div>
+                    <div id="以太之蕾·雅利洛-VI" class="option" onclick="selectTask('以太之蕾·雅利洛-VI')">以太之蕾·雅利洛-VI</div>
+                    <div id="藏珍之蕾·雅利洛-VI" class="option" onclick="selectTask('藏珍之蕾·雅利洛-VI')">藏珍之蕾·雅利洛-VI</div>
+                    <div id="回忆之蕾·仙舟「罗浮」" class="option" onclick="selectTask('回忆之蕾·仙舟「罗浮」')">回忆之蕾·仙舟「罗浮」</div>
+                    <div id="以太之蕾·仙舟「罗浮」" class="option" onclick="selectTask('以太之蕾·仙舟「罗浮」')">以太之蕾·仙舟「罗浮」</div>
+                    <div id="藏珍之蕾·仙舟「罗浮」" class="option" onclick="selectTask('藏珍之蕾·仙舟「罗浮」')">藏珍之蕾·仙舟「罗浮」</div>
+                    <div id="回忆之蕾·匹诺康尼" class="option" onclick="selectTask('回忆之蕾·匹诺康尼')">回忆之蕾·匹诺康尼</div>
+                    <div id="以太之蕾·匹诺康尼" class="option" onclick="selectTask('以太之蕾·匹诺康尼')">以太之蕾·匹诺康尼</div>
+                    <div id="藏珍之蕾·匹诺康尼" class="option" onclick="selectTask('藏珍之蕾·匹诺康尼')">藏珍之蕾·匹诺康尼</div>
+                </div>
             </div>
-            <div id="content3" class="content-page">
-                <div class="content-item">Content for Item 3</div>
+            <div id="Cavern_Relic_Sets" class="content-page">
+                <div class="setting">
+                    <div class="add_task" onclick="addTask('Cavern_Relic_Sets')">+</div>
+                    <div class="add_task" onclick="confirm(this)">确认</div>
+                </div>
+                <div class="select-box">
+                    <div id='密林卧雪的猎人' class="option" onclick="selectTask('密林卧雪的猎人')">密林卧雪的猎人</div>
+                    <div id='晨昏交界的翔鹰' class="option" onclick="selectTask('晨昏交界的翔鹰')">晨昏交界的翔鹰</div>
+                    <div id='街头出身的拳王' class="option" onclick="selectTask('街头出身的拳王')">街头出身的拳王</div>
+                    <div id='流星追迹的怪盗' class="option" onclick="selectTask('流星追迹的怪盗')">流星追迹的怪盗</div>
+                    <div id='云无留迹的过客' class="option" onclick="selectTask('云无留迹的过客')">云无留迹的过客</div>
+                    <div id='野穗伴行的快枪手' class="option" onclick="selectTask('野穗伴行的快枪手')">野穗伴行的快枪手</div>
+                    <div id='戍卫风雪的铁卫' class="option" onclick="selectTask('戍卫风雪的铁卫')">戍卫风雪的铁卫</div>
+                    <div id='繁星璀璨的天才' class="option" onclick="selectTask('繁星璀璨的天才')">繁星璀璨的天才</div>
+                    <div id='净庭教宗的圣骑士' class="option" onclick="selectTask('净庭教宗的圣骑士')">净庭教宗的圣骑士</div>
+                    <div id='激奏雷电的乐队' class="option" onclick="selectTask('激奏雷电的乐队')">激奏雷电的乐队</div>
+                    <div id='熔岩锻铸的火匠' class="option" onclick="selectTask('熔岩锻铸的火匠')">熔岩锻铸的火匠</div>
+                    <div id='盗匪荒漠的废土客' class="option" onclick="selectTask('盗匪荒漠的废土客')">盗匪荒漠的废土客</div>
+                    <div id='宝命长存的莳者' class="option" onclick="selectTask('宝命长存的莳者')">宝命长存的莳者</div>
+                    <div id='骇域漫游的信使' class="option" onclick="selectTask('骇域漫游的信使')">骇域漫游的信使</div>
+                    <div id='毁烬焚骨的大公' class="option" onclick="selectTask('毁烬焚骨的大公')">毁烬焚骨的大公</div>
+                    <div id='幽锁深牢的系囚' class="option" onclick="selectTask('幽锁深牢的系囚')">幽锁深牢的系囚</div>
+                    <div id='死水深潜的先驱' class="option" onclick="selectTask('死水深潜的先驱')">死水深潜的先驱</div>
+                    <div id='机心戏梦的钟表匠' class="option" onclick="selectTask('机心戏梦的钟表匠')">机心戏梦的钟表匠</div>
+                    <div id='荡除蠹灾的铁骑' class="option" onclick="selectTask('荡除蠹灾的铁骑')">荡除蠹灾的铁骑</div>
+                    <div id='风举云飞的勇烈' class="option" onclick="selectTask('风举云飞的勇烈')">风举云飞的勇烈</div>
+                </div>
             </div>
-            <div id="content4" class="content-page">
-                <div class="content-item">Content for Item 4</div>
-            </div>
-            <!-- Add more content items as needed -->
         </div>
     </div>
     <script src="script.js"></script>
