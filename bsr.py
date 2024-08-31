@@ -386,14 +386,14 @@ def Cavern_Relic_Sets(task_Cavern_Relic_Sets: dict[str: int]) -> None:
 
 # 位面饰
 def Planar_Ornaments(task_Planar_Ornaments: dict[str: int]) -> None:
-    diffenrential_universe = {'永恒笑剧': ['奔狼的都蓝王朝', '劫火莲灯铸炼宫'],
-                              '伴你入眠': ['无主荒星茨冈尼亚', '出云显世与高天神国'],
-                              '天剑如雨': ['苍穹战线格拉默', '梦想之地匹诺康尼'],
-                              '孽果盘生': ['繁星竞技场', '折断的龙骨'],
-                              '百年冻土': ['筑城者的贝洛伯格', '停转的萨尔索图'],
-                              '温柔话语': ['泛银河商业公司', '星体差分机'],
-                              '浴火钢心': ['盗贼公国塔利亚', '生命的翁瓦克'],
-                              '坚城不倒': ['太空封印站', '不老者的仙舟'], }
+    diffenrential_universe = {'永恒笑剧·差分宇宙': ['奔狼的都蓝王朝', '劫火莲灯铸炼宫'],
+                              '伴你入眠·差分宇宙': ['无主荒星茨冈尼亚', '出云显世与高天神国'],
+                              '天剑如雨·差分宇宙': ['苍穹战线格拉默', '梦想之地匹诺康尼'],
+                              '孽果盘生·差分宇宙': ['繁星竞技场', '折断的龙骨'],
+                              '百年冻土·差分宇宙': ['筑城者的贝洛伯格', '停转的萨尔索图'],
+                              '温柔话语·差分宇宙': ['泛银河商业公司', '星体差分机'],
+                              '浴火钢心·差分宇宙': ['盗贼公国塔利亚', '生命的翁瓦克'],
+                              '坚城不倒·差分宇宙': ['太空封印站', '不老者的仙舟'], }
 
     task_diffenrential_universe = {}
     task_Planar_Ornaments_key = list(task_Planar_Ornaments.keys())
@@ -445,7 +445,7 @@ def Planar_Ornaments(task_Planar_Ornaments: dict[str: int]) -> None:
             if Trailblaze_Power < 40:
                 pyautogui.hotkey('esc')
                 break
-            [(x, y)] = results.get('饰品提取')
+            [(x, y)] = results.get('位面饰品')
             pyautogui.click(x, y)
             # 查找正确的“传送”标签
             while True:
