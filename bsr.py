@@ -712,8 +712,7 @@ def main():
             time.sleep(3)
             return_to_the_login_interface()
             time.sleep(10)
-            close_the_game()
-            break
+        close_the_game()
     except Exception as e:
         print('something wrong!')
         with open(r'doc\error.log', 'a', encoding='utf-8') as f:
