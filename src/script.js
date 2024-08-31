@@ -13,7 +13,7 @@ function showContent(contentId, event) {
     selectBoxs.forEach(selectBox => selectBox.classList.remove('show'));
 }
 
-function changeAccount(event) {
+async function changeAccount(event) {
     const account = event.currentTarget.textContent;
     // 获取 .account 元素
     const accountDiv = document.querySelector('.account');
@@ -28,7 +28,7 @@ function changeAccount(event) {
     const taskItems = document.querySelectorAll('.task-item');
     taskItems.forEach(taskItem => taskItem.parentNode.removeChild(taskItem));
     // 获取config中的数据
-    const response = pywebview.api.get_config();
+    const response = await pywebview.api.get_config();
     const config = JSON.parse(response);
     if (config.users[account].hasOwnProperty('task')) {
         Object.keys(config.users[account].task).forEach(challenge => {
@@ -52,6 +52,9 @@ function changeAccount(event) {
         }
         )
     }
+    const dailyTraining = config.users[account].dailyTraining;
+    const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
+    dailyTrainingSwitch.checked = dailyTraining;
 }
 
 async function addAccount() {
@@ -83,6 +86,8 @@ async function addAccount() {
             // 删除所有的task-item
             const taskItems = document.querySelectorAll('.task-item');
             taskItems.forEach(taskItem => taskItem.parentNode.removeChild(taskItem));
+            const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
+            dailyTrainingSwitch.checked = false;
         };
     }
 }
@@ -191,6 +196,10 @@ async function load_config() {
             }
             )
         }
+        const dailyTraining = config.users[account].dailyTraining;
+        console.log(`dailyTraining: ${dailyTraining}`);
+        const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
+        dailyTrainingSwitch.checked = dailyTraining;
     }
 }
 
@@ -232,3 +241,13 @@ async function start() {
     await pywebview.api.start();
 
 }
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
+    dailyTrainingSwitch.addEventListener('change', async (event) => {
+        const account = document.querySelector('.account').textContent;
+        const dailyTraining = event.target.checked;
+        // 在这里添加你需要执行的逻辑，例如保存设置到配置文件
+        await pywebview.api.set_daily_training(account, dailyTraining);
+    });
+});

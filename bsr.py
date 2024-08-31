@@ -248,6 +248,7 @@ def Daily_Training():
     pyautogui.click()
     time.sleep(3)
     pyautogui.hotkey('esc')
+    time.sleep(3)
 
 
 # 隧洞遗器
@@ -380,6 +381,7 @@ def Cavern_Relic_Sets(task_Cavern_Relic_Sets: dict[str: int]) -> None:
                                 break
                     else:
                         time.sleep(5)
+        time.sleep(10)
 
 
 # 位面饰
@@ -507,6 +509,7 @@ def Planar_Ornaments(task_Planar_Ornaments: dict[str: int]) -> None:
                                 break
                     else:
                         time.sleep(5)
+        time.sleep(10)
 
 
 # 拟造花萼 (金)
@@ -661,17 +664,24 @@ def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
                                     break
                         else:
                             time.sleep(5)
+        time.sleep(10)
 
 
 # 任务
 def task(account: str) -> None:
     if "Planar_Ornaments" in config['users'][account]['task']:
-        Planar_Ornaments(config['users'][account]['task']["Planar_Ornaments"])
+        if config['users'][account]['task']["Planar_Ornaments"] != {}:
+            Planar_Ornaments(config['users'][account]
+                             ['task']["Planar_Ornaments"])
     if "Calyx_Golden" in config['users'][account]['task']:
-        Calyx_Golden(config['users'][account]['task']["Calyx_Golden"])
+        if config['users'][account]['task']["Calyx_Golden"] != {}:
+            Calyx_Golden(config['users'][account]['task']["Calyx_Golden"])
     if "Cavern_Relic_Sets" in config['users'][account]['task']:
-        Cavern_Relic_Sets(config['users'][account]
-                          ['task']["Cavern_Relic_Sets"])
+        if config['users'][account]['task']["Cavern_Relic_Sets"] != {}:
+            Cavern_Relic_Sets(config['users'][account]
+                              ['task']["Cavern_Relic_Sets"])
+    if config['users'][account]["dailyTraining"] == True:
+        Daily_Training()
 
 
 def main():
@@ -695,7 +705,7 @@ def main():
             output_text.yview_moveto(1)
             output_text.update()
             task(account)
-            time.sleep(10)
+            time.sleep(3)
             return_to_the_login_interface()
             time.sleep(10)
             close_the_game()

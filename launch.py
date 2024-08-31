@@ -47,12 +47,14 @@ class Api:
             # 添加子表
             self.config['users'][account] = tomlkit.table()
             self.config['users'][account]['password'] = password
+            self.config['users'][account]["dailyTraining"] = False
         else:
             # 添加一个表
             self.config['users'] = tomlkit.table()
             # 添加子表
             self.config['users'][account] = tomlkit.table()
             self.config['users'][account]['password'] = password
+            self.config['users'][account]["dailyTraining"] = False
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 
@@ -68,6 +70,13 @@ class Api:
             self.config['users'][account]['task'][challengeName] = tasks
             with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
                 f.write(tomlkit.dumps(self.config))
+
+    def set_daily_training(self, account, daily_training):
+        with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+            self.config = tomlkit.parse(f.read())
+        self.config['users'][account]["dailyTraining"] = daily_training
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(tomlkit.dumps(self.config))
 
     def start(self):
         subprocess.Popen(['python', 'bsr.py'], shell=True)
