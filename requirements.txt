@@ -1,0 +1,6 @@
+psutil
+pyautogui
+pyperclip
+paddleocr
+pywebview
+tomlkit

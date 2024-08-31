@@ -4,7 +4,6 @@ import webview
 import tomlkit
 import json
 import subprocess
-import elevate
 
 
 class Api:
