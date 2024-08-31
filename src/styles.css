@@ -1,7 +1,9 @@
 body {
     font-family: Arial, sans-serif;
+    height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .container {
@@ -21,6 +23,7 @@ body {
 
 .sidebar-item {
     background-color: #ccc;
+    display: none;
     margin: 5px 0;
     padding: 10px;
     border-radius: 5px;
@@ -32,10 +35,11 @@ body {
     background-color: #ddd;
     display: flex;
     margin: 5px 0;
-    padding: 10px;
     border-radius: 5px;
+}
+
+.account {
     cursor: pointer;
-    justify-content: space-between;
 }
 
 .change {
@@ -67,26 +71,85 @@ body {
 .main-content {
     flex-grow: 1;
     /* Take up remaining space */
-    padding: 20px;
+    padding: 10px;
     background-color: #fff;
 }
 
 .content-page {
+    flex-grow: 1;
     background-color: #fff;
     display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .content-item {
     background-color: #eee;
-    margin: 10px 5px;
-    padding: 15px;
+    margin: 5px;
+    padding: 10px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.content-item:hover {
+    background-color: #ccc;
+}
+
+.switch-item {
+    display: flex;
+    background-color: #eee;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    justify-content: space-between;
+}
+
+.add_task {
+    flex-grow: 1;
+    background-color: #eee;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.select-box {
+    background-color: #eee;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    max-height: 0;
+    border-radius: 5px;
+    transition: max-height 0.5s ease-out;
+}
+
+.select-box.show {
+    max-height: calc(100%);
+}
+
+.option {
+    background-color: #ddd;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.option:hover {
+    background-color: #bbb;
+}
+
+.add_task:hover {
+    background-color: #bbb;
 }
 
 .account-num {
     background-color: #eee;
-    margin: 10px 5px;
-    padding: 15px;
+    margin: 5px;
+    padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -102,7 +165,93 @@ body {
     display: none;
 }
 
-/* 默认显示第一个内容项 */
-#userpage {
+.add-account {
+    flex-grow: 1;
+    display: none;
+    justify-content: center;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.add-account-1 {
+    background-color: #eee;
+    justify-content: center;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.show-account {
+    flex-grow: 1;
+    display: none;
+    padding: 10px;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.task-item {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #eee;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.task-item button {
+    margin-left: 5px;
+}
+
+.setting {
+    flex: 0 0 auto;
+    display: flex;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:checked+.slider:before {
+    transform: translateX(14px);
 }

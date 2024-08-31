@@ -14,12 +14,8 @@ import psutil
 import pyperclip
 
 
-# 读取TOML文件
-try:
-    with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
-        config = parse(f.read())
-except FileNotFoundError:
-    sys.exit('没有找到配置文件！')
+with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+    config = parse(f.read())
 
 
 def find_game_path():
@@ -252,10 +248,11 @@ def Daily_Training():
     pyautogui.click()
     time.sleep(3)
     pyautogui.hotkey('esc')
+    time.sleep(3)
 
 
 # 隧洞遗器
-def Cavern_Relic_Sets():
+def Cavern_Relic_Sets(task_Cavern_Relic_Sets: dict[str: int]) -> None:
     Cavern_of_Corrosion = {'霜风之径·侵蚀隧洞': ['密林卧雪的猎人', '晨昏交界的翔鹰'],
                            '迅拳之径·侵蚀隧洞': ['街头出身的拳王', '流星追迹的怪盗'],
                            '漂泊之径·侵蚀隧洞': ['云无留迹的过客', '野穗伴行的快枪手'],
@@ -267,33 +264,26 @@ def Cavern_Relic_Sets():
                            '梦潜之径·侵蚀隧洞': ['死水深潜的先驱', '机心戏梦的钟表匠'],
                            '勇骑之径·侵蚀隧洞': ['荡除蠹灾的铁骑', '风举云飞的勇烈']}
 
-    task_Cavern_Relic_Sets = {'密林卧雪的猎人': 0,
-                              '晨昏交界的翔鹰': 0,
-                              '街头出身的拳王': 0,
-                              '流星追迹的怪盗': 0,
-                              '云无留迹的过客': 0,
-                              '野穗伴行的快枪手': 0,
-                              '戍卫风雪的铁卫': 0,
-                              '繁星璀璨的天才': 0,
-                              '净庭教宗的圣骑士': 0,
-                              '激奏雷电的乐队': 0,
-                              '熔岩锻铸的火匠': 0,
-                              '盗匪荒漠的废土客': 0,
-                              '宝命长存的莳者': 0,
-                              '骇域漫游的信使': 0,
-                              '毁烬焚骨的大公': 0,
-                              '幽锁深牢的系囚': 0,
-                              '死水深潜的先驱': 0,
-                              '机心戏梦的钟表匠': 0,
-                              '荡除蠹灾的铁骑': 0,
-                              '风举云飞的勇烈': 0}
-
     task_Cavern_of_Corrosion = {}
+    task_Cavern_Relic_Sets_key = list(task_Cavern_Relic_Sets.keys())
 
-    for Corrosion_name, Relic_Sets_name in Cavern_of_Corrosion.items():
-        times = task_Cavern_Relic_Sets[Relic_Sets_name[0]
-                                       ] + task_Cavern_Relic_Sets[Relic_Sets_name[1]]
-        task_Cavern_of_Corrosion[Corrosion_name] = times
+    for Relic_Sets_name, times in task_Cavern_Relic_Sets.items():
+        if Relic_Sets_name in task_Cavern_Relic_Sets_key:
+            for Corrosion_name, Relic_Sets_names in Cavern_of_Corrosion.items():
+                if Relic_Sets_name in Relic_Sets_names:
+                    another_Relic_Sets_name = Relic_Sets_names[
+                        0] if Relic_Sets_name == Relic_Sets_names[1] else Relic_Sets_names[1]
+                    if another_Relic_Sets_name in task_Cavern_Relic_Sets_key:
+                        task_Cavern_of_Corrosion[Corrosion_name] = times + \
+                            task_Cavern_Relic_Sets[another_Relic_Sets_name]
+                        task_Cavern_Relic_Sets_key.remove(Relic_Sets_name)
+                        task_Cavern_Relic_Sets_key.remove(
+                            another_Relic_Sets_name)
+                    else:
+                        task_Cavern_of_Corrosion[Corrosion_name] = times
+                        task_Cavern_Relic_Sets_key.remove(Relic_Sets_name)
+                break
+
     my_exit = 0
     for name, times in task_Cavern_of_Corrosion.items():
         if my_exit == 1:
@@ -391,10 +381,11 @@ def Cavern_Relic_Sets():
                                 break
                     else:
                         time.sleep(5)
+        time.sleep(10)
 
 
 # 位面饰
-def Planar_Ornaments():
+def Planar_Ornaments(task_Planar_Ornaments: dict[str: int]) -> None:
     diffenrential_universe = {'永恒笑剧·差分宇宙': ['奔狼的都蓝王朝', '劫火莲灯铸炼宫'],
                               '伴你入眠·差分宇宙': ['无主荒星茨冈尼亚', '出云显世与高天神国'],
                               '天剑如雨·差分宇宙': ['苍穹战线格拉默', '梦想之地匹诺康尼'],
@@ -404,29 +395,25 @@ def Planar_Ornaments():
                               '浴火钢心·差分宇宙': ['盗贼公国塔利亚', '生命的翁瓦克'],
                               '坚城不倒·差分宇宙': ['太空封印站', '不老者的仙舟'], }
 
-    task_Planar_Ornaments = {'奔狼的都蓝王朝': 1,
-                             '劫火莲灯铸炼宫': 0,
-                             '无主荒星茨冈尼亚': 0,
-                             '出云显世与高天神国': 0,
-                             '苍穹战线格拉默': 0,
-                             '梦想之地匹诺康尼': 0,
-                             '繁星竞技场': 0,
-                             '折断的龙骨': 0,
-                             '筑城者的贝洛伯格': 0,
-                             '停转的萨尔索图': 0,
-                             '泛银河商业公司': 0,
-                             '星体差分机': 0,
-                             '盗贼公国塔利亚': 0,
-                             '生命的翁瓦克': 0,
-                             '太空封印站': 1,
-                             '不老者的仙舟': 0, }
-
     task_diffenrential_universe = {}
+    task_Planar_Ornaments_key = list(task_Planar_Ornaments.keys())
 
-    for universe_name, plannar_name in diffenrential_universe.items():
-        times = task_Planar_Ornaments[plannar_name[0]
-                                      ] + task_Planar_Ornaments[plannar_name[1]]
-        task_diffenrential_universe[universe_name] = times
+    for Ornaments_name, times in task_Planar_Ornaments.items():
+        if Ornaments_name in task_Planar_Ornaments_key:
+            for diffenrential_universe_name, Ornaments_names in diffenrential_universe.items():
+                if Ornaments_name in Ornaments_names:
+                    another_Ornaments_name = Ornaments_names[
+                        0] if Ornaments_name == Ornaments_names[1] else Ornaments_names[1]
+                    if another_Ornaments_name in task_Planar_Ornaments_key:
+                        task_diffenrential_universe[diffenrential_universe_name] = times + \
+                            task_Planar_Ornaments[another_Ornaments_name]
+                        task_Planar_Ornaments_key.remove(Ornaments_name)
+                        task_Planar_Ornaments_key.remove(
+                            another_Ornaments_name)
+                    else:
+                        task_diffenrential_universe[diffenrential_universe_name] = times
+                        task_Planar_Ornaments_key.remove(Ornaments_name)
+                break
     my_exit = 0
     for name, times in task_diffenrential_universe.items():
         if my_exit == 1:
@@ -522,21 +509,13 @@ def Planar_Ornaments():
                                 break
                     else:
                         time.sleep(5)
+        time.sleep(10)
 
 
 # 拟造花萼 (金)
-def Calyx_Golden():
-    task_Calyx = {'回忆之蕾·雅利洛-VI': 0,
-                  '以太之蕾·雅利洛-VI': 0,
-                  '藏珍之蕾·雅利洛-VI': 0,
-                  '回忆之蕾·仙舟「罗浮」': 0,
-                  '以太之蕾·仙舟「罗浮」': 0,
-                  '藏珍之蕾·仙舟「罗浮」': 0,
-                  '回忆之蕾·匹诺康尼': 0,
-                  '以太之蕾·匹诺康尼': 0,
-                  '藏珍之蕾·匹诺康尼': 0}
+def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
     my_exit = 0
-    for name, times in task_Calyx.items():
+    for name, times in task_Calyx_Golden.items():
         if my_exit == 1:
             break
         if times != 0:
@@ -685,12 +664,24 @@ def Calyx_Golden():
                                     break
                         else:
                             time.sleep(5)
+        time.sleep(10)
 
 
 # 任务
-def task():
-    Cavern_Relic_Sets()
-    Planar_Ornaments()
+def task(account: str) -> None:
+    if "Planar_Ornaments" in config['users'][account]['task']:
+        if config['users'][account]['task']["Planar_Ornaments"] != {}:
+            Planar_Ornaments(config['users'][account]
+                             ['task']["Planar_Ornaments"])
+    if "Calyx_Golden" in config['users'][account]['task']:
+        if config['users'][account]['task']["Calyx_Golden"] != {}:
+            Calyx_Golden(config['users'][account]['task']["Calyx_Golden"])
+    if "Cavern_Relic_Sets" in config['users'][account]['task']:
+        if config['users'][account]['task']["Cavern_Relic_Sets"] != {}:
+            Cavern_Relic_Sets(config['users'][account]
+                              ['task']["Cavern_Relic_Sets"])
+    if config['users'][account]["dailyTraining"] == True:
+        Daily_Training()
 
 
 def main():
@@ -698,7 +689,8 @@ def main():
         output_text.insert(tk.END, '已启动\n')
         output_text.yview_moveto(1)
         output_text.update()
-        for account, password in config['users'].items():
+        for account in config['users'].keys():
+            password = config['users'][account]['password']
             time.sleep(18)
             log_out()
             log_in(account, password)
@@ -712,8 +704,8 @@ def main():
             output_text.insert(tk.END, '开始任务\n')
             output_text.yview_moveto(1)
             output_text.update()
-            Planar_Ornaments()
-            time.sleep(10)
+            task(account)
+            time.sleep(3)
             return_to_the_login_interface()
             time.sleep(10)
             close_the_game()
