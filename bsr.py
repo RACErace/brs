@@ -315,7 +315,7 @@ def Cavern_Relic_Sets(task_Cavern_Relic_Sets: dict[str: int]) -> None:
             if Trailblaze_Power < 40:
                 pyautogui.hotkey('esc')
                 break
-            [(x, y)] = results.get('隧洞遗器')
+            [(x, y)] = results.get('侵蚀隧洞')
             pyautogui.click(x, y)
             # 查找正确的“传送”标签
             while True:
@@ -546,8 +546,12 @@ def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
                 pyautogui.hotkey('esc')
                 break
             time.sleep(3)
-            [(x, y)] = results.get('拟造花萼 (金)')
-            pyautogui.click(x, y)
+            try:
+                [(x, y)] = results.get('拟造花萼 (金)')
+                pyautogui.click(x, y)
+            except:
+                [(x, y)] = results.get('拟造花萼(金)')
+                pyautogui.click(x, y)
             # 查找正确的“传送”标签
             while True:
                 results = my_ocr()
