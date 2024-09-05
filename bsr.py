@@ -712,17 +712,14 @@ def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
 
 # 任务
 def task(account: str) -> None:
-    if "Planar_Ornaments" in config['users'][account]['task']:
-        if config['users'][account]['task']["Planar_Ornaments"] != {}:
-            Planar_Ornaments(config['users'][account]
-                             ['task']["Planar_Ornaments"])
-    if "Calyx_Golden" in config['users'][account]['task']:
-        if config['users'][account]['task']["Calyx_Golden"] != {}:
-            Calyx_Golden(config['users'][account]['task']["Calyx_Golden"])
-    if "Cavern_Relic_Sets" in config['users'][account]['task']:
-        if config['users'][account]['task']["Cavern_Relic_Sets"] != {}:
-            Cavern_Relic_Sets(config['users'][account]
-                              ['task']["Cavern_Relic_Sets"])
+    if config['users'][account]['task']["Planar_Ornaments"] != {}:
+        Planar_Ornaments(config['users'][account]
+                         ['task']["Planar_Ornaments"])
+    if config['users'][account]['task']["Calyx_Golden"] != {}:
+        Calyx_Golden(config['users'][account]['task']["Calyx_Golden"])
+    if config['users'][account]['task']["Cavern_Relic_Sets"] != {}:
+        Cavern_Relic_Sets(config['users'][account]
+                          ['task']["Cavern_Relic_Sets"])
     if config['users'][account]["Assignments"] == True:
         Assignments()
     if config['users'][account]["dailyTraining"] == True:

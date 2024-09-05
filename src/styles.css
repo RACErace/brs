@@ -107,7 +107,6 @@ body {
 }
 
 .add_task {
-    flex-grow: 1;
     background-color: #eee;
     margin: 5px;
     padding: 10px;

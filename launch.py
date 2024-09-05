@@ -58,10 +58,10 @@ class Api:
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 
-    def setting_tasks(self, account, challengeName, tasks):
+    def setting_tasks(self, account, tasks):
         with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
             self.config = tomlkit.parse(f.read())
-        self.config['users'][account]['task'][challengeName] = tasks
+        self.config['users'][account]['task'] = tasks
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 

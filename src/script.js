@@ -1,18 +1,4 @@
 function showContent(contentId, event) {
-    // 检查是否有未保存的任务
-    const unsaveTaskItems = document.querySelectorAll('.unsave');
-    if (unsaveTaskItems.length > 0) {
-        // 创建一个确认框，询问用户是否要保存未保存的任务
-        const result = confirm('有未保存的任务，是否要保存？');
-        if (result) {
-            // 如果用户点击了确认按钮，则调用confirm函数
-            return;
-        }
-        else {
-            // 如果用户点击了取消按钮，则删除所有未保存的任务
-            unsaveTaskItems.forEach(taskItem => taskItem.parentNode.removeChild(taskItem));
-        }
-    }
     // Hide all content items
     const contents = document.querySelectorAll('.content-page');
     contents.forEach(content => content.style.display = 'none');
@@ -59,8 +45,8 @@ async function changeAccount(event) {
                             </div>
                         `;
             const challengePage = document.getElementById(challenge)
-            const settingDiv = challengePage.querySelector('.setting');
-            challengePage.insertBefore(taskItem, settingDiv);
+            const addTaskDiv = challengePage.querySelector('.add_task');
+            challengePage.insertBefore(taskItem, addTaskDiv);
         });
     }
     )
@@ -81,7 +67,7 @@ async function addAccount() {
         const password = prompt('请输入密码');
         if (password) {
             // 将账号和密码写入config中
-            const response = await pywebview.api.add_account(account, password);
+            await pywebview.api.add_account(account, password);
             const changePage = document.getElementById('changepage');
             const contentItem = document.getElementById('new-account');
             const accountNum = document.createElement('div');
@@ -117,14 +103,13 @@ function addTask(pageName) {
 }
 
 function selectTask(taskName) {
-    const selectBoxs = document.querySelectorAll('.select-box');
-    selectBoxs.forEach(selectBox => selectBox.classList.remove('show'));
+    const selectBox = document.getElementById(taskName).parentElement;
+    selectBox.classList.remove('show');
     const option = document.getElementById(taskName);
     option.style.display = 'none';
 
     const taskItem = document.createElement('div');
     taskItem.className = 'task-item';
-    taskItem.classList.add('unsave');
     taskItem.innerHTML = `
                 <span class="name">${taskName}</span>
                 <div>
@@ -135,10 +120,10 @@ function selectTask(taskName) {
                 </div>
             `;
 
-    const taskDiv = document.getElementById(taskName);
-    // taskDiv的父元素的前一个兄弟元素
-    const settingDiv = taskDiv.parentElement.previousElementSibling;
-    settingDiv.parentNode.insertBefore(taskItem, settingDiv);
+    // select-box的前一个兄弟元素
+    const addTaskDiv = selectBox.previousElementSibling;
+    addTaskDiv.parentNode.insertBefore(taskItem, addTaskDiv);
+    setting_tasks();
 }
 
 function decrement(button) {
@@ -147,12 +132,14 @@ function decrement(button) {
     if (count > 0) {
         countSpan.textContent = count - 1;
     }
+    setting_tasks();
 }
 
 function increment(button) {
     const countSpan = button.previousElementSibling;
     const count = parseInt(countSpan.textContent);
     countSpan.textContent = count + 1;
+    setting_tasks();
 }
 
 function removeTask(button, taskName) {
@@ -161,6 +148,7 @@ function removeTask(button, taskName) {
 
     const option = document.getElementById(taskName);
     option.style.display = 'block';
+    setting_tasks();
 }
 
 async function load_config() {
@@ -210,8 +198,8 @@ async function load_config() {
                                 </div>
                             `;
                 const challengePage = document.getElementById(challenge)
-                const settingDiv = challengePage.querySelector('.setting');
-                challengePage.insertBefore(taskItem, settingDiv);
+                const addTaskDiv = challengePage.querySelector('.add_task');
+                challengePage.insertBefore(taskItem, addTaskDiv);
             });
         }
         )
@@ -228,35 +216,21 @@ window.onload = function () {
     setTimeout(load_config, 500);
 }
 
-async function myConfirm(div) {
+async function setting_tasks() {
     const tasks = {};
     const account = document.querySelector('.account').textContent;
-    const challengeName = div.parentNode.parentNode.id;
-    const taskItems = div.parentNode.parentNode.querySelectorAll('.task-item');
-    taskItems.forEach(taskItem => {
-        const taskName = taskItem.querySelector('.name').textContent;
-        const taskCount = parseInt(taskItem.querySelector('.task-count').textContent);
-        tasks[taskName] = taskCount;
-        taskItem.classList.remove('unsave');
+    const challenges = ["Planar_Ornaments", "Calyx_Golden", "Cavern_Relic_Sets"];
+    challenges.forEach(challengeName => {
+        tasks[challengeName] = {};
+        const taskItems = document.getElementById(challengeName).querySelectorAll('.task-item');
+        taskItems.forEach(taskItem => {
+            const taskName = taskItem.querySelector('.name').textContent;
+            const taskCount = parseInt(taskItem.querySelector('.task-count').textContent);
+            tasks[challengeName][taskName] = taskCount;
+        });
     });
-    await pywebview.api.setting_tasks(account, challengeName, tasks);
-    // 创建并显示保存成功的消息
-    const messageDiv = document.createElement('div');
-    messageDiv.textContent = "保存成功";
-    messageDiv.style.position = 'fixed';
-    messageDiv.style.bottom = '10px';
-    messageDiv.style.left = '50%';
-    messageDiv.style.transform = 'translateX(-50%)';
-    messageDiv.style.backgroundColor = 'green';
-    messageDiv.style.color = 'white';
-    messageDiv.style.padding = '10px';
-    messageDiv.style.borderRadius = '5px';
-    document.body.appendChild(messageDiv);
-
-    // 3秒后移除消息
-    setTimeout(() => {
-        document.body.removeChild(messageDiv);
-    }, 3000);
+    console.log(tasks);
+    await pywebview.api.setting_tasks(account, tasks);
 }
 
 async function start() {
