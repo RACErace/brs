@@ -55,6 +55,10 @@ async function changeAccount(event) {
     const dailyTraining = config.users[account].dailyTraining;
     const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
     dailyTrainingSwitch.checked = dailyTraining;
+    const assignments = config.users[account].assignments;
+    const assignmentsSwitch = document.getElementById('assignmentsSwitch');
+    assignmentsSwitch.checked = assignments;
+
 }
 
 async function addAccount() {
@@ -88,6 +92,8 @@ async function addAccount() {
             taskItems.forEach(taskItem => taskItem.parentNode.removeChild(taskItem));
             const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
             dailyTrainingSwitch.checked = false;
+            const assignmentsSwitch = document.getElementById('assignmentsSwitch');
+            assignmentsSwitch.checked = false;
         };
     }
 }
@@ -197,9 +203,10 @@ async function load_config() {
             )
         }
         const dailyTraining = config.users[account].dailyTraining;
-        console.log(`dailyTraining: ${dailyTraining}`);
         const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
         dailyTrainingSwitch.checked = dailyTraining;
+        const assignments = config.users[account].assignments;
+        assignmentsSwitch.checked = assignments;
     }
 }
 
@@ -244,10 +251,23 @@ async function start() {
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
-    dailyTrainingSwitch.addEventListener('change', async (event) => {
-        const account = document.querySelector('.account').textContent;
-        const dailyTraining = event.target.checked;
-        // 在这里添加你需要执行的逻辑，例如保存设置到配置文件
-        await pywebview.api.set_daily_training(account, dailyTraining);
-    });
+    const assignmentsSwitch = document.getElementById('assignmentsSwitch');
+
+    if (dailyTrainingSwitch) {
+        dailyTrainingSwitch.addEventListener('change', async (event) => {
+            const account = document.querySelector('.account').textContent;
+            const dailyTraining = event.target.checked;
+            // 在这里添加你需要执行的逻辑，例如保存设置到配置文件
+            await pywebview.api.set_daily_training(account, dailyTraining);
+        });
+    }
+
+    if (assignmentsSwitch) {
+        assignmentsSwitch.addEventListener('change', async (event) => {
+            const account = document.querySelector('.account').textContent;
+            const assignments = event.target.checked;
+            // 在这里添加你需要执行的逻辑，例如保存设置到配置文件
+            await pywebview.api.set_assignments(account, assignments);
+        });
+    }
 });

@@ -179,6 +179,16 @@ def my_click_img(target: str) -> None:
             time.sleep(1)
 
 
+def find_img(target: str) -> tuple[int, int]:
+    while True:
+        try:
+            x, y = pyautogui.locateCenterOnScreen(
+                f'img\\{screen_width}_{screen_height}\\{target}.png', confidence=0.8)
+            return x, y
+        except:
+            time.sleep(1)
+
+
 # return_to_the_login_interface
 def return_to_the_login_interface():
     output_text.insert(tk.END, '准备退出游戏\n')
@@ -239,12 +249,41 @@ def close_the_game():
     my_click_text('确定')
 
 
+def Assignments():
+    pyautogui.hotkey('esc')
+    time.sleep(3)
+    my_click_text('委托')
+    time.sleep(3)
+    my_click_text('一键领取')
+    time.sleep(3)
+    my_click_text('再次派遣')
+    time.sleep(3)
+    pyautogui.hotkey('esc')
+    time.sleep(3)
+    pyautogui.hotkey('esc')
+    time.sleep(3)
+
+
 # Daily_Training
 def Daily_Training():
     pyautogui.hotkey('f4')
     time.sleep(3)
-    my_click_text('400')
-    time.sleep(3)
+    results = my_ocr()
+    positions = results.get('领取')
+    x = float('inf')
+    for x0, y0 in positions:
+        if x0 < x:
+            x, y = x0, y0
+    time.sleep(1)
+    pyautogui.click(x, y)
+    time.sleep(1)
+    pyautogui.click(x, y)
+    time.sleep(1)
+    pyautogui.click(x, y)
+    time.sleep(1)
+    pyautogui.click(x, y)
+    time.sleep(1)
+    [(x, y)] = results.get('500')
     pyautogui.click()
     time.sleep(3)
     pyautogui.hotkey('esc')
@@ -583,7 +622,7 @@ def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
             results = my_ocr()
             if 10 <= Trailblaze_Power <= 60:  # 体力不足60的情况
                 clicks = int(Trailblaze_Power / 10) - 1
-                [(x, y)] = results.get('+')
+                x, y = find_img('increment')
                 for _ in range(clicks):
                     pyautogui.click(x, y)
                     time.sleep(0.1)
@@ -603,7 +642,7 @@ def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
                         time.sleep(5)
             else:  # 体力大于60的情况
                 results = my_ocr()
-                [(x, y)] = results.get('+')
+                x, y = find_img('increment')
                 for _ in range(5):
                     pyautogui.click(x, y)
                     time.sleep(0.1)
@@ -642,7 +681,7 @@ def Calyx_Golden(task_Calyx_Golden: dict[str: int]) -> None:
                                     time.sleep(3)
                                     clicks = int(Trailblaze_Power / 10) - 1
                                     results = my_ocr()
-                                    [(x, y)] = results.get('+')
+                                    x, y = find_img('increment')
                                     for _ in range(clicks):
                                         pyautogui.click(x, y)
                                         time.sleep(0.1)
@@ -684,6 +723,8 @@ def task(account: str) -> None:
         if config['users'][account]['task']["Cavern_Relic_Sets"] != {}:
             Cavern_Relic_Sets(config['users'][account]
                               ['task']["Cavern_Relic_Sets"])
+    if config['users'][account]["Assignments"] == True:
+        Assignments()
     if config['users'][account]["dailyTraining"] == True:
         Daily_Training()
 
