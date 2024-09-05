@@ -47,6 +47,8 @@ class Api:
             self.config['users'][account] = tomlkit.table()
             self.config['users'][account]['password'] = password
             self.config['users'][account]["dailyTraining"] = False
+            self.config['users'][account]["assignments"] = False
+            self.config['users'][account]['task'] = tomlkit.table()
         else:
             # 添加一个表
             self.config['users'] = tomlkit.table()
@@ -54,26 +56,30 @@ class Api:
             self.config['users'][account] = tomlkit.table()
             self.config['users'][account]['password'] = password
             self.config['users'][account]["dailyTraining"] = False
+            self.config['users'][account]["assignments"] = False
+            self.config['users'][account]['task'] = tomlkit.table()
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 
     def setting_tasks(self, account, challengeName, tasks):
         with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
             self.config = tomlkit.parse(f.read())
-        try:
-            self.config['users'][account]['task'][challengeName] = tasks
-            with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
-                f.write(tomlkit.dumps(self.config))
-        except Exception:
-            self.config['users'][account]['task'] = tomlkit.table()
-            self.config['users'][account]['task'][challengeName] = tasks
-            with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
-                f.write(tomlkit.dumps(self.config))
+        self.config['users'][account]['task'] = tomlkit.table()
+        self.config['users'][account]['task'][challengeName] = tasks
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(tomlkit.dumps(self.config))
 
     def set_daily_training(self, account, daily_training):
         with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
             self.config = tomlkit.parse(f.read())
         self.config['users'][account]["dailyTraining"] = daily_training
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(tomlkit.dumps(self.config))
+
+    def set_assignments(self, account, assignments):
+        with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+            self.config = tomlkit.parse(f.read())
+        self.config['users'][account]["assignments"] = assignments
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 
