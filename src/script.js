@@ -1,4 +1,18 @@
 function showContent(contentId, event) {
+    // 检查是否有未保存的任务
+    const unsaveTaskItems = document.querySelectorAll('.unsave');
+    if (unsaveTaskItems.length > 0) {
+        // 创建一个确认框，询问用户是否要保存未保存的任务
+        const result = confirm('有未保存的任务，是否要保存？');
+        if (result) {
+            // 如果用户点击了确认按钮，则调用confirm函数
+            return;
+        }
+        else {
+            // 如果用户点击了取消按钮，则删除所有未保存的任务
+            unsaveTaskItems.forEach(taskItem => taskItem.parentNode.removeChild(taskItem));
+        }
+    }
     // Hide all content items
     const contents = document.querySelectorAll('.content-page');
     contents.forEach(content => content.style.display = 'none');
@@ -30,13 +44,12 @@ async function changeAccount(event) {
     // 获取config中的数据
     const response = await pywebview.api.get_config();
     const config = JSON.parse(response);
-    if (config.users[account].hasOwnProperty('task')) {
-        Object.keys(config.users[account].task).forEach(challenge => {
-            Object.keys(config.users[account].task[challenge]).forEach(task => {
-                const taskCount = config.users[account].task[challenge][task];
-                const taskItem = document.createElement('div');
-                taskItem.className = 'task-item';
-                taskItem.innerHTML = `
+    Object.keys(config.users[account].task).forEach(challenge => {
+        Object.keys(config.users[account].task[challenge]).forEach(task => {
+            const taskCount = config.users[account].task[challenge][task];
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-item';
+            taskItem.innerHTML = `
                             <span class="name">${task}</span>
                             <div>
                                 <button onclick="decrement(this)">-</button>
@@ -45,13 +58,12 @@ async function changeAccount(event) {
                                 <button onclick="removeTask(this, '${task}')">删除</button>
                             </div>
                         `;
-                const challengePage = document.getElementById(challenge)
-                const settingDiv = challengePage.querySelector('.setting');
-                challengePage.insertBefore(taskItem, settingDiv);
-            });
-        }
-        )
+            const challengePage = document.getElementById(challenge)
+            const settingDiv = challengePage.querySelector('.setting');
+            challengePage.insertBefore(taskItem, settingDiv);
+        });
     }
+    )
     const dailyTraining = config.users[account].dailyTraining;
     const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
     dailyTrainingSwitch.checked = dailyTraining;
@@ -112,6 +124,7 @@ function selectTask(taskName) {
 
     const taskItem = document.createElement('div');
     taskItem.className = 'task-item';
+    taskItem.classList.add('unsave');
     taskItem.innerHTML = `
                 <span class="name">${taskName}</span>
                 <div>
@@ -206,6 +219,7 @@ async function load_config() {
         const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
         dailyTrainingSwitch.checked = dailyTraining;
         const assignments = config.users[account].assignments;
+        const assignmentsSwitch = document.getElementById('assignmentsSwitch');
         assignmentsSwitch.checked = assignments;
     }
 }
@@ -214,7 +228,7 @@ window.onload = function () {
     setTimeout(load_config, 500);
 }
 
-async function confirm(div) {
+async function myConfirm(div) {
     const tasks = {};
     const account = document.querySelector('.account').textContent;
     const challengeName = div.parentNode.parentNode.id;
@@ -223,6 +237,7 @@ async function confirm(div) {
         const taskName = taskItem.querySelector('.name').textContent;
         const taskCount = parseInt(taskItem.querySelector('.task-count').textContent);
         tasks[taskName] = taskCount;
+        taskItem.classList.remove('unsave');
     });
     await pywebview.api.setting_tasks(account, challengeName, tasks);
     // 创建并显示保存成功的消息
