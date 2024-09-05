@@ -180,28 +180,28 @@ async function load_config() {
             accountNum.onclick = changeAccount;
             changePage.insertBefore(accountNum, contentItem);
         });
-        if (config.users[account].hasOwnProperty('task')) {
-            Object.keys(config.users[account].task).forEach(challenge => {
-                Object.keys(config.users[account].task[challenge]).forEach(task => {
-                    const taskCount = config.users[account].task[challenge][task];
-                    const taskItem = document.createElement('div');
-                    taskItem.className = 'task-item';
-                    taskItem.innerHTML = `
-                                <span class="name">${task}</span>
+        Object.keys(config.users[account].task).forEach(challenge => {
+            Object.keys(config.users[account].task[challenge]).forEach(taskName => {
+                const taskCount = config.users[account].task[challenge][taskName];
+                const option = document.getElementById(taskName);
+                option.style.display = 'none';
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.innerHTML = `
+                                <span class="name">${taskName}</span>
                                 <div>
                                     <button onclick="decrement(this)">-</button>
                                     <span class="task-count">${taskCount}</span>
                                     <button onclick="increment(this)">+</button>
-                                    <button onclick="removeTask(this, '${task}')">删除</button>
+                                    <button onclick="removeTask(this, '${taskName}')">删除</button>
                                 </div>
                             `;
-                    const challengePage = document.getElementById(challenge)
-                    const settingDiv = challengePage.querySelector('.setting');
-                    challengePage.insertBefore(taskItem, settingDiv);
-                });
-            }
-            )
+                const challengePage = document.getElementById(challenge)
+                const settingDiv = challengePage.querySelector('.setting');
+                challengePage.insertBefore(taskItem, settingDiv);
+            });
         }
+        )
         const dailyTraining = config.users[account].dailyTraining;
         const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
         dailyTrainingSwitch.checked = dailyTraining;
