@@ -1,3 +1,8 @@
+from System.Reflection import Assembly, BindingFlags
+from System.Threading import ApartmentState, Thread, ThreadStart
+from System.Drawing import Color, ColorTranslator, Icon, Point, Size, SizeF
+from System import Environment, Func, Int32, IntPtr, Type, UInt32, Array, Object
+import System.Windows.Forms as WinForms
 import ctypes
 import logging
 import os
@@ -24,15 +29,11 @@ clr.AddReference('System.Collections')
 clr.AddReference('System.Threading')
 clr.AddReference('System.Reflection')
 
-import System.Windows.Forms as WinForms
-from System import Environment, Func, Int32, IntPtr, Type, UInt32, Array, Object
-from System.Drawing import Color, ColorTranslator, Icon, Point, Size, SizeF
-from System.Threading import ApartmentState, Thread, ThreadStart
-from System.Reflection import Assembly, BindingFlags
 
 kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
 logger = logging.getLogger('pywebview')
 cache_dir = None
+
 
 def _is_new_version(current_version: str, new_version: str) -> bool:
     new_range = new_version.split('.')
@@ -103,25 +104,26 @@ def _is_chromium():
 
     return False
 
+
 is_cef = forced_gui_ == 'cef'
 is_chromium = not is_cef and _is_chromium() and forced_gui_ != 'mshtml'
 
 if is_cef:
-    from . import cef as CEF
+    from .platforms import cef as CEF
 
     IWebBrowserInterop = object
 
     logger.debug('Using WinForms / CEF')
     renderer = 'cef'
 elif is_chromium:
-    from . import edgechromium as Chromium
+    from .platforms import edgechromium as Chromium
 
     IWebBrowserInterop = object
 
     logger.debug('Using WinForms / Chromium')
     renderer = 'edgechromium'
 else:
-    from . import mshtml as IE
+    from .platforms import mshtml as IE
 
     logger.warning(
         'MSHTML is deprecated. See https://pywebview.flowrl.com/guide/web_engine.html on details how to use Edge Chromium'
@@ -133,7 +135,8 @@ else:
 
 def DwmSetWindowAttribute(hwnd, attr, value, size=4):
     DwmSetWindowAttribute = ctypes.windll.dwmapi.DwmSetWindowAttribute
-    DwmSetWindowAttribute.argtypes = [wintypes.HWND, wintypes.DWORD, ctypes.c_void_p, wintypes.DWORD]
+    DwmSetWindowAttribute.argtypes = [
+        wintypes.HWND, wintypes.DWORD, ctypes.c_void_p, wintypes.DWORD]
     return DwmSetWindowAttribute(hwnd, attr, ctypes.byref(ctypes.c_int(value)), size)
 
 
@@ -172,7 +175,8 @@ class BrowserView:
             self.AutoScaleDimensions = SizeF(96.0, 96.0)
             self.AutoScaleMode = WinForms.AutoScaleMode.Dpi
             # for chromium edge, need this factor to modify the coordinates
-            self.scale_factor = windll.shcore.GetScaleFactorForDevice(0) / 100 if is_chromium else 1
+            self.scale_factor = windll.shcore.GetScaleFactorForDevice(
+                0) / 100 if is_chromium else 1
 
             if window.initial_x is not None and window.initial_y is not None:
                 self.StartPosition = WinForms.FormStartPosition.Manual
@@ -180,12 +184,15 @@ class BrowserView:
             elif window.screen:
                 self.StartPosition = WinForms.FormStartPosition.Manual
                 x = int(
-                    window.screen.frame.X * self.scale_factor + (window.screen.width - window.initial_width) * self.scale_factor / 2
+                    window.screen.frame.X * self.scale_factor +
+                    (window.screen.width - window.initial_width) *
+                    self.scale_factor / 2
                     if window.screen.frame.X >= 0
                     else window.screen.frame.X * self.scale_factor - window.screen.width * self.scale_factor / 2
                 )
 
-                y = int(window.screen.frame.Y * self.scale_factor + (window.screen.height - window.initial_height) * self.scale_factor / 2)
+                y = int(window.screen.frame.Y * self.scale_factor +
+                        (window.screen.height - window.initial_height) * self.scale_factor / 2)
                 self.Location = Point(x, y)
             else:
                 self.StartPosition = WinForms.FormStartPosition.CenterScreen
@@ -206,10 +213,12 @@ class BrowserView:
                 self.Icon = Icon.ExtractAssociatedIcon(window.icon_path)
             else:
                 handle = kernel32.GetModuleHandleW(None)
-                icon_handle = windll.shell32.ExtractIconW(handle, sys.executable, 0)
+                icon_handle = windll.shell32.ExtractIconW(
+                    handle, sys.executable, 0)
 
                 if icon_handle != 0:
-                    self.Icon = Icon.FromHandle(IntPtr.op_Explicit(Int32(icon_handle))).Clone()
+                    self.Icon = Icon.FromHandle(
+                        IntPtr.op_Explicit(Int32(icon_handle))).Clone()
                     windll.user32.DestroyIcon(icon_handle)
 
             self.closed = window.events.closed
@@ -231,14 +240,16 @@ class BrowserView:
 
             if window.frameless:
                 self.frameless = window.frameless
-                self.FormBorderStyle = getattr(WinForms.FormBorderStyle, 'None')
+                self.FormBorderStyle = getattr(
+                    WinForms.FormBorderStyle, 'None')
 
             if BrowserView.app_menu_list:
                 self.set_window_menu(BrowserView.app_menu_list)
 
             if is_cef:
                 self.browser = None
-                CEF.create_browser(window, self.Handle.ToInt32(), BrowserView.alert, self)
+                CEF.create_browser(
+                    window, self.Handle.ToInt32(), BrowserView.alert, self)
             elif is_chromium:
                 self.browser = Chromium.EdgeChrome(self, window, cache_dir)
             else:
@@ -247,15 +258,18 @@ class BrowserView:
             if (
                 window.transparent and self.browser
             ):  # window transparency is supported only with EdgeChromium
-                self.BackColor = Color.FromArgb(255,255,0,0)
-                self.TransparencyKey = Color.FromArgb(255,255,0,0)
-                self.SetStyle(WinForms.ControlStyles.SupportsTransparentBackColor, True)
+                self.BackColor = Color.FromArgb(255, 255, 0, 0)
+                self.TransparencyKey = Color.FromArgb(255, 255, 0, 0)
+                self.SetStyle(
+                    WinForms.ControlStyles.SupportsTransparentBackColor, True)
                 self.browser.DefaultBackgroundColor = Color.Transparent
             else:
-                self.BackColor = ColorTranslator.FromHtml(window.background_color)
+                self.BackColor = ColorTranslator.FromHtml(
+                    window.background_color)
 
             if not window.focus:
-                windll.user32.SetWindowLongW(self.Handle.ToInt32(), -20, windll.user32.GetWindowLongW(self.Handle.ToInt32(), -20) | 0x8000000)
+                windll.user32.SetWindowLongW(self.Handle.ToInt32(
+                ), -20, windll.user32.GetWindowLongW(self.Handle.ToInt32(), -20) | 0x8000000)
 
             self.Activated += self.on_activated
             self.Shown += self.on_shown
@@ -268,7 +282,8 @@ class BrowserView:
 
         def on_activated(self, *_):
             if not self.pywebview_window.focus:
-                windll.user32.SetWindowLongW(self.Handle.ToInt32(), -20, windll.user32.GetWindowLongW(self.Handle.ToInt32(), -20) | 0x8000000)
+                windll.user32.SetWindowLongW(self.Handle.ToInt32(
+                ), -20, windll.user32.GetWindowLongW(self.Handle.ToInt32(), -20) | 0x8000000)
 
         def on_shown(self, *_):
             if not is_cef:
@@ -337,7 +352,8 @@ class BrowserView:
             self.pywebview_window.events.resized.set(self.Width, self.Height)
 
         def on_move(self, sender, args):
-            self.pywebview_window.events.moved.set(self.Location.X, self.Location.Y)
+            self.pywebview_window.events.moved.set(
+                self.Location.X, self.Location.Y)
 
         def evaluate_js(self, script):
             def _evaluate_js():
@@ -363,7 +379,8 @@ class BrowserView:
                 self.browser.clear_cookies()
 
             if not is_chromium:
-                logger.error('clear_cookies() is not implemented for this platform')
+                logger.error(
+                    'clear_cookies() is not implemented for this platform')
                 return
 
             self.Invoke(Func[Type](_clear_cookies))
@@ -374,7 +391,8 @@ class BrowserView:
 
             cookies = []
             if not is_chromium:
-                logger.error('get_cookies() is not implemented for this platform')
+                logger.error(
+                    'get_cookies() is not implemented for this platform')
                 return cookies
 
             self.loaded.wait()
@@ -410,7 +428,8 @@ class BrowserView:
         def set_window_menu(self, menu_list):
             def _set_window_menu():
                 def create_action_item(menu_line_item):
-                    action_item = WinForms.ToolStripMenuItem(menu_line_item.title)
+                    action_item = WinForms.ToolStripMenuItem(
+                        menu_line_item.title)
                     # Don't run action function on main thread
                     action_item.Click += (
                         lambda _, __, menu_line_item=menu_line_item: threading.Thread(
@@ -426,9 +445,11 @@ class BrowserView:
                             m.DropDownItems.Add(WinForms.ToolStripSeparator())
                             continue
                         elif isinstance(menu_line_item, MenuAction):
-                            m.DropDownItems.Add(create_action_item(menu_line_item))
+                            m.DropDownItems.Add(
+                                create_action_item(menu_line_item))
                         elif isinstance(menu_line_item, Menu):
-                            create_submenu(menu_line_item.title, menu_line_item.items, m)
+                            create_submenu(menu_line_item.title,
+                                           menu_line_item.items, m)
 
                     if supermenu:
                         supermenu.DropDownItems.Add(m)
@@ -439,7 +460,8 @@ class BrowserView:
 
                 for menu in menu_list:
                     if isinstance(menu, Menu):
-                        top_level_menu.Items.Add(create_submenu(menu.title, menu.items))
+                        top_level_menu.Items.Add(
+                            create_submenu(menu.title, menu.items))
                     elif isinstance(menu, MenuAction):
                         top_level_menu.Items.Add(create_action_item(menu))
 
@@ -458,7 +480,8 @@ class BrowserView:
                     self.old_style = self.FormBorderStyle
                     self.old_location = self.Location
                     self.old_screen = WinForms.Screen.FromControl(self)
-                    self.FormBorderStyle = getattr(WinForms.FormBorderStyle, 'None')
+                    self.FormBorderStyle = getattr(
+                        WinForms.FormBorderStyle, 'None')
                     self.Bounds = WinForms.Screen.FromControl(self).Bounds
                     self.WindowState = WinForms.FormWindowState.Maximized
                     self.is_fullscreen = True
@@ -475,7 +498,8 @@ class BrowserView:
                     self.WindowState = WinForms.FormWindowState.Normal
                     self.FormBorderStyle = self.old_style
                     self.is_fullscreen = False
-                    valid_location = any(screen == self.old_screen for screen in WinForms.Screen.AllScreens)
+                    valid_location = any(
+                        screen == self.old_screen for screen in WinForms.Screen.AllScreens)
 
                     if not valid_location:
                         self.Size = self.old_size
@@ -499,7 +523,8 @@ class BrowserView:
             if fix_point & FixPoint.SOUTH:
                 y = y + self.Height - height
 
-            windll.user32.SetWindowPos(self.Handle.ToInt32(), None, x, y, width, height, 64)
+            windll.user32.SetWindowPos(
+                self.Handle.ToInt32(), None, x, y, width, height, 64)
 
         def move(self, x, y):
             SWP_NOSIZE = 0x0001  # Retains the current size
@@ -556,11 +581,16 @@ class OpenFolderDialog:
     foldersFilter = 'Folders|\n'
     flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
     windowsFormsAssembly = Assembly.LoadWithPartialName('System.Windows.Forms')
-    iFileDialogType = windowsFormsAssembly.GetType('System.Windows.Forms.FileDialogNative+IFileDialog')
-    OpenFileDialogType = windowsFormsAssembly.GetType('System.Windows.Forms.OpenFileDialog')
-    FileDialogType = windowsFormsAssembly.GetType('System.Windows.Forms.FileDialog')
-    createVistaDialogMethodInfo = OpenFileDialogType.GetMethod('CreateVistaDialog', flags)
-    onBeforeVistaDialogMethodInfo = OpenFileDialogType.GetMethod('OnBeforeVistaDialog', flags)
+    iFileDialogType = windowsFormsAssembly.GetType(
+        'System.Windows.Forms.FileDialogNative+IFileDialog')
+    OpenFileDialogType = windowsFormsAssembly.GetType(
+        'System.Windows.Forms.OpenFileDialog')
+    FileDialogType = windowsFormsAssembly.GetType(
+        'System.Windows.Forms.FileDialog')
+    createVistaDialogMethodInfo = OpenFileDialogType.GetMethod(
+        'CreateVistaDialog', flags)
+    onBeforeVistaDialogMethodInfo = OpenFileDialogType.GetMethod(
+        'OnBeforeVistaDialog', flags)
     getOptionsMethodInfo = FileDialogType.GetMethod('GetOptions', flags)
     setOptionsMethodInfo = iFileDialogType.GetMethod('SetOptions', flags)
     fosPickFoldersBitFlag = windowsFormsAssembly.GetType(
@@ -584,43 +614,55 @@ class OpenFolderDialog:
         openFileDialog.Multiselect = False
         openFileDialog.RestoreDirectory = True
 
-        iFileDialog = OpenFolderDialog.createVistaDialogMethodInfo.Invoke(openFileDialog, [])
-        OpenFolderDialog.onBeforeVistaDialogMethodInfo.Invoke(openFileDialog, [iFileDialog])
-        options = OpenFolderDialog.getOptionsMethodInfo.Invoke(openFileDialog, [])
+        iFileDialog = OpenFolderDialog.createVistaDialogMethodInfo.Invoke(
+            openFileDialog, [])
+        OpenFolderDialog.onBeforeVistaDialogMethodInfo.Invoke(
+            openFileDialog, [iFileDialog])
+        options = OpenFolderDialog.getOptionsMethodInfo.Invoke(
+            openFileDialog, [])
         options = options.op_BitwiseOr(OpenFolderDialog.fosPickFoldersBitFlag)
         OpenFolderDialog.setOptionsMethodInfo.Invoke(iFileDialog, [options])
         adviseParametersWithOutputConnectionToken = Array[Object]([
-            OpenFolderDialog.vistaDialogEventsConstructorInfo.Invoke([openFileDialog]),
+            OpenFolderDialog.vistaDialogEventsConstructorInfo.Invoke(
+                [openFileDialog]),
             UInt32(0),
         ])
-        OpenFolderDialog.adviseMethodInfo.Invoke(iFileDialog, adviseParametersWithOutputConnectionToken)
+        OpenFolderDialog.adviseMethodInfo.Invoke(
+            iFileDialog, adviseParametersWithOutputConnectionToken)
         dwCookie = adviseParametersWithOutputConnectionToken.GetValue(1)
         try:
-            result = OpenFolderDialog.showMethodInfo.Invoke(iFileDialog, [parent.Handle if parent else None])
+            result = OpenFolderDialog.showMethodInfo.Invoke(
+                iFileDialog, [parent.Handle if parent else None])
             if result == 0:
                 return openFileDialog.FileName
 
             return None
 
         finally:
-            OpenFolderDialog.unadviseMethodInfo.Invoke(iFileDialog, [UInt32(dwCookie)])
+            OpenFolderDialog.unadviseMethodInfo.Invoke(
+                iFileDialog, [UInt32(dwCookie)])
+
 
 _main_window_created = Event()
 _main_window_created.clear()
 
 _already_set_up_app = False
 
+
 def init_storage():
     global cache_dir
 
     if not _settings['private_mode'] or _settings['storage_path']:
         try:
-            data_folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+            data_folder = Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData)
 
             if not os.access(data_folder, os.W_OK):
-                data_folder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                data_folder = Environment.GetFolderPath(
+                    Environment.SpecialFolder.UserProfile)
 
-            cache_dir = _settings['storage_path'] or os.path.join(data_folder, 'pywebview')
+            cache_dir = _settings['storage_path'] or os.path.join(
+                data_folder, 'pywebview')
 
             if not os.path.exists(cache_dir):
                 os.makedirs(cache_dir)
@@ -701,8 +743,9 @@ def create_confirmation_dialog(title, message, uid):
 
     if not i:
         return
-        
-    result = WinForms.MessageBox.Show(message, title, WinForms.MessageBoxButtons.OKCancel)
+
+    result = WinForms.MessageBox.Show(
+        message, title, WinForms.MessageBoxButtons.OKCancel)
     return result == WinForms.DialogResult.OK
 
 
@@ -727,10 +770,12 @@ def create_file_dialog(dialog_type, directory, allow_multiple, save_filename, fi
 
             if len(file_types) > 0:
                 dialog.Filter = '|'.join(
-                    ['{0} ({1})|{1}'.format(*parse_file_type(f)) for f in file_types]
+                    ['{0} ({1})|{1}'.format(*parse_file_type(f))
+                     for f in file_types]
                 )
             else:
-                dialog.Filter = i.localization['windows.fileFilter.allFiles'] + ' (*.*)|*.*'
+                dialog.Filter = i.localization['windows.fileFilter.allFiles'] + \
+                    ' (*.*)|*.*'
             dialog.RestoreDirectory = True
 
             result = dialog.ShowDialog(i)
@@ -743,10 +788,12 @@ def create_file_dialog(dialog_type, directory, allow_multiple, save_filename, fi
             dialog = WinForms.SaveFileDialog()
             if len(file_types) > 0:
                 dialog.Filter = '|'.join(
-                    ['{0} ({1})|{1}'.format(*parse_file_type(f)) for f in file_types]
+                    ['{0} ({1})|{1}'.format(*parse_file_type(f))
+                     for f in file_types]
                 )
             else:
-                dialog.Filter = i.localization['windows.fileFilter.allFiles'] + ' (*.*)|*.*'
+                dialog.Filter = i.localization['windows.fileFilter.allFiles'] + \
+                    ' (*.*)|*.*'
             dialog.InitialDirectory = directory
             dialog.RestoreDirectory = True
             dialog.FileName = save_filename
@@ -931,7 +978,8 @@ def get_size(uid):
 
 
 def get_screens():
-    screens = [Screen(s.Bounds.Width, s.Bounds.Height, s.WorkingArea) for s in WinForms.Screen.AllScreens]
+    screens = [Screen(s.Bounds.Width, s.Bounds.Height, s.WorkingArea)
+               for s in WinForms.Screen.AllScreens]
     return screens
 
 
