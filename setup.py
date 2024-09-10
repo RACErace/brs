@@ -13,7 +13,7 @@ winforms_path = os.path.join(
 # 将 ./webview文件夹中的文件拷贝到指定的目录
 os.system(f'copy .\\webview\\__init__.py {init_path}')
 os.system(f'copy .\\webview\\window.py {window_path}')
-os.system(f'copy .\\webview\\winforms.py {winforms_path}')
+os.system(f'copy .\\webview\\platforms\\winforms.py {winforms_path}')
 
 # 删除./webview文件夹
-os.system('rd /s /q webview')
+os.system('rd /s /q temp')
