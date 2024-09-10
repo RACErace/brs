@@ -8,31 +8,36 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
     cd brs
     ```
 
-2. 安装PaddlePaddle
+2. 配置环境
+
+    - **建议使用虚拟环境**
+        ```sh
+        conda create --name BetterSR python=3.12.4 -y
+        ```
+
+    - **激活虚拟环境**
+        ```sh
+        conda activate BetterSR
+        ```
+
+4. 安装PaddlePaddle
     - **您的机器安装的是CUDA 11，请运行以下命令安装**
-
-
         ```sh
         pip install paddlepaddle-gpu
         ```
 
-
-
     - **您的机器是CPU，请运行以下命令安装**
-
-
         ```sh
         pip install paddlepaddle
         ```
 
-3. 配置环境：
+5. 安装依赖：
     ```sh
     pip install -r requirements.txt
     python setup.py
     ```
 
 ## 使用
-
 
 请以2560\*1600或2560\*1440的分辨率运行游戏。
 
