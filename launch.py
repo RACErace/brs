@@ -12,7 +12,7 @@ class Api:
         try:
             with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
                 self.config = tomlkit.parse(f.read())
-        except FileNotFoundError:
+        except:
             # 获取存在的磁盘
             partitions = psutil.disk_partitions()
             drives = [partition.device for partition in partitions]
@@ -33,6 +33,10 @@ class Api:
                 # 创建一个新的 TOML 文档
                 self.config = tomlkit.document()
                 self.config['game_path'] = game_path
+
+                # 确保目录存在
+                os.makedirs('doc', exist_ok=True)
+
                 with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
                     f.write(tomlkit.dumps(self.config))
             else:
