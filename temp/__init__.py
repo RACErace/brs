@@ -61,7 +61,8 @@ formatter = logging.Formatter('[pywebview] %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-log_level = logging.DEBUG if os.environ.get('PYWEBVIEW_LOG') == 'debug' else logging.INFO
+log_level = logging.DEBUG if os.environ.get(
+    'PYWEBVIEW_LOG') == 'debug' else logging.INFO
 logger.setLevel(log_level)
 
 OPEN_DIALOG = 10
@@ -161,7 +162,8 @@ def start(
         raise WebViewException('pywebview must be run on a main thread.')
 
     if len(windows) == 0:
-        raise WebViewException('You must create a window first before calling this function.')
+        raise WebViewException(
+            'You must create a window first before calling this function.')
 
     guilib = initialize(gui)
 
@@ -175,7 +177,8 @@ def start(
         keyfile, certfile = None, None
 
     urls = [w.original_url for w in windows]
-    has_local_urls = not not [w.original_url for w in windows if is_local_url(w.original_url)]
+    has_local_urls = not not [
+        w.original_url for w in windows if is_local_url(w.original_url)]
     # start the global server if it's not running and we need it
     if (http.global_server is None) and (http_server or has_local_urls):
         if not _settings['private_mode'] and not http_port:
@@ -277,7 +280,8 @@ def create_window(
 
     valid_color = r'^#(?:[0-9a-fA-F]{3}){1,2}$'
     if not re.match(valid_color, background_color):
-        raise ValueError('{0} is not a valid hex triplet color'.format(background_color))
+        raise ValueError(
+            '{0} is not a valid hex triplet color'.format(background_color))
 
     uid = 'master' if len(windows) == 0 else 'child_' + uuid4().hex[:8]
 
@@ -322,7 +326,8 @@ def create_window(
     # This immediately creates the window only if `start` has already been called
     if threading.current_thread().name != 'MainThread' and guilib:
         if is_app(url) or is_local_url(url) and not server.is_running:
-            url_prefix, common_path, server = http.start_server([url], server=server, **server_args)
+            url_prefix, common_path, server = http.start_server(
+                [url], server=server, **server_args)
         else:
             url_prefix, common_path, server = None, None, None
 
@@ -350,7 +355,8 @@ def generate_ssl_cert():
         key_pem = key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption(),  # BestAvailableEncryption(b"passphrase"),
+            # BestAvailableEncryption(b"passphrase"),
+            encryption_algorithm=serialization.NoEncryption(),
         )
         f.write(key_pem)
 
@@ -359,7 +365,8 @@ def generate_ssl_cert():
         subject = issuer = x509.Name(
             [
                 x509.NameAttribute(NameOID.COUNTRY_NAME, 'US'),
-                x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, 'California'),
+                x509.NameAttribute(
+                    NameOID.STATE_OR_PROVINCE_NAME, 'California'),
                 x509.NameAttribute(NameOID.LOCALITY_NAME, 'San Francisco'),
                 x509.NameAttribute(NameOID.ORGANIZATION_NAME, 'pywebview'),
                 x509.NameAttribute(NameOID.COMMON_NAME, '127.0.0.1'),
@@ -401,4 +408,3 @@ def screens() -> list[Screen]:
     guilib = initialize()
     screens = guilib.get_screens()
     return screens
-

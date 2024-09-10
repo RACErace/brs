@@ -16,7 +16,8 @@ import webview.http as http
 from webview.errors import JavascriptException, WebViewException
 from webview.event import Event, EventContainer
 from webview.localization import original_localization
-from webview.util import (base_uri, escape_string, is_app, is_local_url, parse_file_type)
+from webview.util import (base_uri, escape_string,
+                          is_app, is_local_url, parse_file_type)
 from webview.dom.dom import DOM
 from webview.dom.element import Element
 from webview.screen import Screen
@@ -49,7 +50,8 @@ def _api_call(function: WindowFunc[P, T], event_type: str) -> WindowFunc[P, T]:
 
             return function(self, *args, **kwargs)
         except NameError:
-            raise WebViewException('Create a web view window first, before invoking this function')
+            raise WebViewException(
+                'Create a web view window first, before invoking this function')
 
     return wrapper
 
@@ -190,8 +192,6 @@ class Window:
         )
         self.real_url = self._resolve_url(self.original_url)
 
-
-
     @property
     def width(self) -> int:
         self.events.shown.wait(15)
@@ -254,7 +254,8 @@ class Window:
         if ((self._server is None) or (not self._server.running)) and (
             (is_app(url) or is_local_url(url))
         ):
-            self._url_prefix, self._common_path, self.server = http.start_server([url])
+            self._url_prefix, self._common_path, self.server = http.start_server([
+                                                                                 url])
 
         self.real_url = self._resolve_url(url)
         self.gui.load_url(self.real_url, self.uid)
@@ -271,7 +272,8 @@ class Window:
 
     @_loaded_call
     def load_css(self, stylesheet: str) -> None:
-        code = css.src % stylesheet.replace('\n', '').replace('\r', '').replace('"', "'")
+        code = css.src % stylesheet.replace(
+            '\n', '').replace('\r', '').replace('"', "'")
         self.gui.evaluate_js(code, self.uid)
 
     @_shown_call
