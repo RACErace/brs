@@ -219,7 +219,7 @@ window.onload = function () {
 async function setting_tasks() {
     const tasks = {};
     const account = document.querySelector('.account').textContent;
-    const challenges = ["Planar_Ornaments", "Calyx_Golden", "Cavern_Relic_Sets"];
+    const challenges = ["Planar_Ornaments", "Calyx_Golden", "Calyx_Crimson", "Stagnant_Shadows", "Cavern_Relic_Sets"];
     challenges.forEach(challengeName => {
         tasks[challengeName] = {};
         const taskItems = document.getElementById(challengeName).querySelectorAll('.task-item');
@@ -229,7 +229,6 @@ async function setting_tasks() {
             tasks[challengeName][taskName] = taskCount;
         });
     });
-    console.log(tasks);
     await pywebview.api.setting_tasks(account, tasks);
 }
 

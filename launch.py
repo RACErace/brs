@@ -58,6 +58,8 @@ class Api:
         self.config['users'][account]['task'] = tomlkit.table()
         self.config['users'][account]['task']['Planar_Ornaments'] = {}
         self.config['users'][account]['task']['Calyx_Golden'] = {}
+        self.config['users'][account]['task']['Calyx_Crimson'] = {}
+        self.config['users'][account]['task']['Stagnant_Shadows'] = {}
         self.config['users'][account]['task']['Cavern_Relic_Sets'] = {}
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
