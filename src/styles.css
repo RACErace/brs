@@ -146,16 +146,17 @@ body {
 }
 
 .account-num {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: #eee;
     margin: 5px;
     padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.account-num:hover {
-    background-color: #bbb;
+.account-num button {
+    margin-left: 5px;
 }
 
 /* styles.css */

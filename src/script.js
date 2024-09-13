@@ -13,8 +13,7 @@ function showContent(contentId, event) {
     selectBoxs.forEach(selectBox => selectBox.classList.remove('show'));
 }
 
-async function changeAccount(event) {
-    const account = event.currentTarget.textContent;
+async function changeAccount(account) {
     // 获取 .account 元素
     const accountDiv = document.querySelector('.account');
     // 将 .account 元素的文本内容替换为 account 变量的值
@@ -71,9 +70,15 @@ async function addAccount() {
             const changePage = document.getElementById('changepage');
             const contentItem = document.getElementById('new-account');
             const accountNum = document.createElement('div');
-            accountNum.classList.add('account-num');
-            accountNum.textContent = account;
-            accountNum.onclick = changeAccount;
+            accountNum.className = 'account-num';
+            accountNum.id = account;
+            accountNum.innerHTML = `
+                <span>${account}</span>
+                <div>
+                    <button onclick="changeAccount(${account})">选择</button>
+                    <button onclick="deleteAccount(${account})">删除</button>
+                </div>
+                `;
             changePage.insertBefore(accountNum, contentItem);
             document.querySelector('.add-account').style.display = 'none';
             document.querySelector('.show-account').style.display = 'flex';
@@ -93,6 +98,33 @@ async function addAccount() {
             const assignmentsSwitch = document.getElementById('assignmentsSwitch');
             assignmentsSwitch.checked = false;
         };
+    }
+}
+
+async function deleteAccount(account) {
+    // 获取现在展示的账号号码
+    const nowAccount = document.querySelector('.account').textContent;
+    // 删除config中相应的账号信息
+    await pywebview.api.delete_account(account);
+    // 在.changepage中删除相应的账号
+    const accountNum = document.getElementById(account);
+    accountNum.parentNode.removeChild(accountNum);
+    // 如果删除的账号是当前展示的账号，则将展示的账号切换为第一个账号，如果没有账号，则显示添加账号页面
+    if (nowAccount == account) {
+        console.log(nowAccount, account);
+        const accountNums = document.querySelectorAll('.account-num');
+        console.log(accountNums.length);
+        if (accountNums.length > 1) {
+            const newAccount = accountNums[0].id;
+            changeAccount(newAccount);
+        }
+        else {
+            document.querySelector('.add-account').style.display = 'flex';
+            document.querySelector('.show-account').style.display = 'none';
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => item.style.display = 'none');
+            document.getElementById('changepage').style.display = 'none';
+        }
     }
 }
 
@@ -176,9 +208,15 @@ async function load_config() {
         const contentItem = document.getElementById('new-account');
         accounts.forEach(account => {
             const accountNum = document.createElement('div');
-            accountNum.classList.add('account-num');
-            accountNum.textContent = account;
-            accountNum.onclick = changeAccount;
+            accountNum.className = 'account-num';
+            accountNum.id = account;
+            accountNum.innerHTML = `
+                <span>${account}</span>
+                <div>
+                    <button onclick="changeAccount(${account})">选择</button>
+                    <button onclick="deleteAccount(${account})">删除</button>
+                </div>
+                `;
             changePage.insertBefore(accountNum, contentItem);
         });
         Object.keys(config.users[account].task).forEach(challenge => {
@@ -209,6 +247,9 @@ async function load_config() {
         const assignments = config.users[account].assignments;
         const assignmentsSwitch = document.getElementById('assignmentsSwitch');
         assignmentsSwitch.checked = assignments;
+        const autoClose = config.auto_close;
+        const autoCloseSwitch = document.getElementById('autoCloseSwitch');
+        autoCloseSwitch.checked = autoClose;
     }
 }
 
@@ -219,7 +260,7 @@ window.onload = function () {
 async function setting_tasks() {
     const tasks = {};
     const account = document.querySelector('.account').textContent;
-    const challenges = ["Planar_Ornaments", "Calyx_Golden", "Calyx_Crimson", "Stagnant_Shadows", "Cavern_Relic_Sets"];
+    const challenges = ["Planar_Ornaments", "Calyx_Golden", "Calyx_Crimson", "Stagnant_Shadows", "Cavern_Relic_Sets", "Echo_of_War"];
     challenges.forEach(challengeName => {
         tasks[challengeName] = {};
         const taskItems = document.getElementById(challengeName).querySelectorAll('.task-item');
@@ -240,6 +281,7 @@ async function start() {
 document.addEventListener('DOMContentLoaded', (event) => {
     const dailyTrainingSwitch = document.getElementById('dailyTrainingSwitch');
     const assignmentsSwitch = document.getElementById('assignmentsSwitch');
+    const autoCloseSwitch = document.getElementById('autoCloseSwitch');
 
     if (dailyTrainingSwitch) {
         dailyTrainingSwitch.addEventListener('change', async (event) => {
@@ -256,6 +298,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const assignments = event.target.checked;
             // 在这里添加你需要执行的逻辑，例如保存设置到配置文件
             await pywebview.api.set_assignments(account, assignments);
+        });
+    }
+
+    if (autoCloseSwitch) {
+        autoCloseSwitch.addEventListener('change', async (event) => {
+            const autoClose = event.target.checked;
+            // 在这里添加你需要执行的逻辑，例如保存设置到配置文件
+            await pywebview.api.set_autoClose(autoClose);
         });
     }
 });
