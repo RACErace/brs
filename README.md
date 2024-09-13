@@ -2,13 +2,26 @@
 BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任务的工具。在长草期刷取材料的时候极其适用。
 ## 安装
 
-1. 克隆仓库：
+你可以先从[这里](https://apps.microsoft.com/detail/9nblggh4nns1?rtc=1&hl=zh-cn&gl=CN#activetab=pivot:overviewtab)下载 `winget`
+
+1. 下载git
+    ```sh
+    winget install --id Git.Git -e --source winget
+    ```
+2. 下载Miniconda
+   ```sh
+   curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
+   Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
+   del miniconda.exe
+   ```
+
+3. 克隆仓库：
     ```sh
     git clone https://github.com/RACErace/brs.git
     cd brs
     ```
 
-2. 配置环境
+4. 配置环境
 
     - **建议使用虚拟环境**
         ```sh
@@ -20,7 +33,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
         conda activate BetterSR
         ```
 
-4. 安装PaddlePaddle
+5. 安装PaddlePaddle
     - **您的机器安装的是CUDA 11，请运行以下命令安装**
         ```sh
         pip install paddlepaddle-gpu
@@ -31,7 +44,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
         pip install paddlepaddle
         ```
 
-5. 安装依赖：
+6. 安装依赖：
     ```sh
     pip install -r requirements.txt
     python setup.py
