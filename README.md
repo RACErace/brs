@@ -2,53 +2,74 @@
 BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任务的工具。在长草期刷取材料的时候极其适用。
 ## 安装
 
-你可以先从[这里](https://apps.microsoft.com/detail/9nblggh4nns1?rtc=1&hl=zh-cn&gl=CN#activetab=pivot:overviewtab)下载 `winget`
+你可以先从[这里](https://apps.microsoft.com/detail/9nblggh4nns1?rtc=1&hl=zh-cn&gl=CN#activetab=pivot:overviewtab)下载的`winget`
+
+然后通过同时按下键盘上的 `win` 和 `R` 键来打开“运行”窗口
+
+在输入框中输入 `powershell` ，然后点击 `确定` 
+
+按照下面的步骤依次复制相应的命令并将其粘贴到 `powershell` 终端中
 
 1. 下载git
     ```sh
     winget install --id Git.Git -e --source winget
+    
     ```
 2. 下载Miniconda
    ```sh
    curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
    Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
    del miniconda.exe
+   
    ```
-   或者你也可以从[这里](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)下载
 
-3. 克隆仓库：
+   如果在执行上面命令的过程中出现错误，你可以尝试下面的命令
+   ```sh
+   curl https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
+   Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
+   del miniconda.exe
+   
+   ```
+
+4. 克隆仓库：
     ```sh
     git clone https://github.com/RACErace/brs.git
     cd brs
+    
     ```
 
-4. 配置环境
+5. 配置环境
 
     - **建议使用虚拟环境**
         ```sh
         conda create --name BetterSR python=3.12.4 -y
+        
         ```
 
     - **激活虚拟环境**
         ```sh
         conda activate BetterSR
+        
         ```
 
-5. 安装PaddlePaddle
+6. 安装PaddlePaddle
     - **您的机器安装的是CUDA 11，请运行以下命令安装**
         ```sh
         pip install paddlepaddle-gpu
+        
         ```
 
     - **您的机器是CPU，请运行以下命令安装**
         ```sh
         pip install paddlepaddle
+        
         ```
 
-6. 安装依赖：
+7. 安装依赖：
     ```sh
     pip install -r requirements.txt
     python setup.py
+    
     ```
 
 ## 使用
@@ -61,6 +82,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
 运行 `launch.py` 启动应用：
 ```sh
 python launch.py
+
 ```
 
 ### 主要功能
