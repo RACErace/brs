@@ -14,6 +14,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
    Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
    del miniconda.exe
    ```
+   或者你也可以从[这里](https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe)下载
 
 3. 克隆仓库：
     ```sh
