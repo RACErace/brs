@@ -33,7 +33,7 @@ class Api:
                 # 创建一个新的 TOML 文档
                 self.config = tomlkit.document()
                 self.config['game_path'] = game_path
-
+                self.config['auto_close'] = False
                 # 确保目录存在
                 os.makedirs('doc', exist_ok=True)
 
@@ -61,6 +61,15 @@ class Api:
         self.config['users'][account]['task']['Calyx_Crimson'] = {}
         self.config['users'][account]['task']['Stagnant_Shadows'] = {}
         self.config['users'][account]['task']['Cavern_Relic_Sets'] = {}
+        self.config['users'][account]['task']['Echo_of_War'] = {}
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(tomlkit.dumps(self.config))
+
+    def delete_account(self, account):
+        account = str(account)
+        with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+            self.config = tomlkit.parse(f.read())
+        del self.config['users'][account]
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 
@@ -82,6 +91,13 @@ class Api:
         with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
             self.config = tomlkit.parse(f.read())
         self.config['users'][account]["assignments"] = assignments
+        with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
+            f.write(tomlkit.dumps(self.config))
+
+    def set_autoClose(self, autoClose):
+        with open(r'doc\config.toml', 'r', encoding='utf-8') as f:
+            self.config = tomlkit.parse(f.read())
+        self.config['auto_close'] = autoClose
         with open(r'doc\config.toml', 'w', encoding='utf-8') as f:
             f.write(tomlkit.dumps(self.config))
 

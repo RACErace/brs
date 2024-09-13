@@ -30,6 +30,7 @@
                 <div class="sidebar-item" onclick="showContent('Calyx_Crimson', event)">拟造花萼 (赤)</div>
                 <div class="sidebar-item" onclick="showContent('Stagnant_Shadows', event)">凝滞虚影</div>
                 <div class="sidebar-item" onclick="showContent('Cavern_Relic_Sets', event)">侵蚀隧洞</div>
+                <div class="sidebar-item" onclick="showContent('Echo_of_War', event)">历战余响</div>
             </div>
         </div>
         <div class="main-content">
@@ -46,6 +47,13 @@
                     <span>自动领取每日实训</span>
                     <label class="switch">
                         <input type="checkbox" id="dailyTrainingSwitch">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div id="autoClose" class="switch-item">
+                    <span>完成任务后自动关闭游戏</span>
+                    <label class="switch">
+                        <input type="checkbox" id="autoCloseSwitch">
                         <span class="slider round"></span>
                     </label>
                 </div>
@@ -157,6 +165,17 @@
                     <div id='机心戏梦的钟表匠' class="option" onclick="selectTask('机心戏梦的钟表匠')">机心戏梦的钟表匠</div>
                     <div id='荡除蠹灾的铁骑' class="option" onclick="selectTask('荡除蠹灾的铁骑')">荡除蠹灾的铁骑</div>
                     <div id='风举云飞的勇烈' class="option" onclick="selectTask('风举云飞的勇烈')">风举云飞的勇烈</div>
+                </div>
+            </div>
+            <div id="Echo_of_War" class="content-page">
+                <div class="add_task" onclick="addTask('Echo_of_War')">+</div>
+                <div class="select-box">
+                    <div id="吉光片羽" class="option" onclick="selectTask('吉光片羽')">吉光片羽</div>
+                    <div id="同愿的遗音" class="option" onclick="selectTask('同愿的遗音')">同愿的遗音</div>
+                    <div id="蛀星孕灾的旧恶" class="option" onclick="selectTask('蛀星孕灾的旧恶')">蛀星孕灾的旧恶</div>
+                    <div id="无穷假身的遗恨" class="option" onclick="selectTask('无穷假身的遗恨')">无穷假身的遗恨</div>
+                    <div id="守护者的悲愿" class="option" onclick="selectTask('守护者的悲愿')">守护者的悲愿</div>
+                    <div id="毁灭者的末路" class="option" onclick="selectTask('毁灭者的末路')">毁灭者的末路</div>
                 </div>
             </div>
         </div>
