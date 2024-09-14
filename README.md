@@ -35,7 +35,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
    - **将 `Miniconda` 添加到环境变量**
        ```sh
        $condaPath = "$env:USERPROFILE\miniconda3"
-       [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$condaPath;$condaPath\Scripts;$condaPath\condabin", "User")
+       [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$condaPath;$condaPath\Scripts;$condaPath\condabin;$condaPath\Library\mingw-w64\bin;$condaPath\Library\usr\bin;$condaPath\Library\bin;$condaPath\lib\site-packages", "User")
        
        ```
 
