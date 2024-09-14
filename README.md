@@ -10,6 +10,11 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
 
 按照下面的步骤依次复制相应的命令并将其粘贴到 `powershell` 终端中
 
+更改 `powershell` 设置
+```sh
+Set-ExecutionPolicy -ExecutionPolicy Bypass
+```
+
 1. 下载git
     ```sh
     winget install --id Git.Git -e --source winget
