@@ -74,6 +74,11 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
         ```
 
 6. 安装PaddlePaddle
+    - **切换到清华源**
+        ```sh
+        pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+        ```
+        
     - **您的机器安装的是CUDA 11，请运行以下命令安装**
         ```sh
         pip install paddlepaddle-gpu
@@ -86,7 +91,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
         
         ```
 
-7. 安装依赖：
+8. 安装依赖：
     ```sh
     pip install -r requirements.txt
     python setup.py
