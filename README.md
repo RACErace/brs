@@ -6,7 +6,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
 
 然后通过同时按下键盘上的 `win` 和 `R` 键来打开“运行”窗口
 
-在输入框中输入 `powershell` ，然后点击 `确定` 
+在输入框中输入 `powershell` ，然后同时按下 `Ctrl` + `Shift` + `Enter` 以管理员身份打开 `powershell` 命令行窗口
 
 按照下面的步骤依次复制相应的命令并将其粘贴到 `powershell` 终端中
 
@@ -40,6 +40,17 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
        [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$condaPath;$condaPath\Scripts;$condaPath\condabin;$condaPath\Library\mingw-w64\bin;$condaPath\Library\usr\bin;$condaPath\Library\bin;$condaPath\lib\site-packages", "User")
        
        ```
+
+    - **可以选择切换到清华源**
+       ```sh
+       conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+       conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+       conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+       conda config --set custom_channels.conda-forge https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+       conda config --set custom_channels.pytorch https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch
+
+       ```
+
 
 4. 克隆仓库：
     ```sh
