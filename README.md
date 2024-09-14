@@ -8,12 +8,17 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
 
 在输入框中输入 `powershell` ，然后同时按下 `Ctrl` + `Shift` + `Enter` 以管理员身份打开 `powershell` 命令行窗口
 
-按照下面的步骤依次复制相应的命令并将其粘贴到 `powershell` 终端中
+复制下面的命令并将其粘贴到 `powershell` 终端中
 
 更改 `powershell` 设置
 ```sh
 Set-ExecutionPolicy -ExecutionPolicy Bypass
+
 ```
+
+然后关闭当前窗口
+
+再次同时按下键盘上的 `win` 和 `R` 键来打开“运行”窗口，在输入框中输入 `powershell` ，然后同时按下 `Ctrl` + `Shift` + `Enter` 以管理员身份打开 `powershell` 命令行窗口，按照下面的步骤依次复制相应的命令并将其粘贴到 `powershell` 终端中
 
 1. 下载git
     ```sh
