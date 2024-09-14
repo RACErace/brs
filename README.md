@@ -144,6 +144,19 @@ python launch.py
 
     ![显示错误](img/05.png)
 
+## 再次使用
+
+然后通过同时按下键盘上的 `win` 和 `R` 键来打开“运行”窗口
+
+在输入框中输入 `powershell` ，然后同时按下 `Ctrl` + `Shift` + `Enter` 以管理员身份打开 `powershell` 命令行窗口，执行下面的命令
+
+```sh
+cd brs
+conda activate BetterSR
+python launch.py
+
+```
+
 ## TODO
 
 - **自动领取邮件附件**
