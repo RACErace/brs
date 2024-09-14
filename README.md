@@ -69,7 +69,7 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
 
     - **激活虚拟环境**
         ```sh
-        conda init
+        conda init BetterSR
         conda activate BetterSR
         
         ```
