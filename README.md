@@ -16,20 +16,28 @@ BetterSR 是一个可以自动化完成《崩坏：星穹铁道》中多项任�
     
     ```
 2. 下载Miniconda
-   ```sh
-   curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
-   Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
-   del miniconda.exe
+    - **下载并安装 `Miniconda`**
+       ```sh
+       curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
+       Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
+       del miniconda.exe
+       
+       ```
+    
+       如果在执行上面命令的过程中出现错误，你可以尝试下面的命令
+       ```sh
+       curl https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
+       Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
+       del miniconda.exe
    
-   ```
+       ```
 
-   如果在执行上面命令的过程中出现错误，你可以尝试下面的命令
-   ```sh
-   curl https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
-   Start-Process -FilePath ".\miniconda.exe" -ArgumentList "/S" -Wait
-   del miniconda.exe
-   
-   ```
+   - **将 `Miniconda` 添加到环境变量**
+       ```sh
+       $condaPath = "$env:USERPROFILE\miniconda3"
+       [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$condaPath;$condaPath\Scripts;$condaPath\condabin", "User")
+       
+       ```
 
 4. 克隆仓库：
     ```sh
