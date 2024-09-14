@@ -109,4 +109,4 @@ if __name__ == '__main__':
     api = Api()
     window = webview.create_window(
         'BetterSR', 'src/index.html', js_api=api, icon_path='src/favicon.ico')
-    webview.start(debug=True)
+    webview.start()
