@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import scrolledtext
 import traceback
 import pyautogui
+import keyboard
 import sys
 from paddleocr import PaddleOCR
 from tomlkit import dumps, parse
@@ -23,12 +24,7 @@ game_path = config.get('game_path')
 subprocess.Popen(game_path, shell=True)
 
 # 初始化OCR引擎
-ocr = PaddleOCR(use_angle_cls=True, lang='ch',
-                use_gpu=True, show_log=False)
-# OCR设置
-slice = {'horizontal_stride': 300, 'vertical_stride': 500,
-         'merge_x_thres': 50, 'merge_y_thres': 35}
-
+ocr = PaddleOCR(use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=False)
 
 # 创建主窗口
 root = tk.Tk()
@@ -69,45 +65,19 @@ def my_ocr() -> dict[str: list]:
         screenshot = pyautogui.screenshot()
         screenshot.save('screenshot.png')
         # 执行OCR
-        result0 = ocr.ocr('screenshot.png', cls=True)
-        try:
-            result1 = ocr.ocr('screenshot.png', cls=True, slice=slice)
-        except:
-            result1 = [None]
-        if result0[0] and result1[0]:
+        result = ocr.predict('screenshot.png')
+        if result[0]:
             break
         else:
             time.sleep(1)
     results = {}
-    res = result0[0]
-    for line in res:
-        text = line[1][0]
-        x = (line[0][0][0] + line[0][1][0] +
-             line[0][2][0] + line[0][3][0]) / 4
-        y = (line[0][0][1] + line[0][1][1] +
-             line[0][2][1] + line[0][3][1]) / 4
+    rec_texts = result[0]["rec_texts"]
+    dt_polys = result[0]["dt_polys"]
+    for text, poly in zip(rec_texts, dt_polys):
+        x = (poly[0][0] + poly[1][0] + poly[2][0] + poly[3][0]) / 4
+        y = (poly[0][1] + poly[1][1] + poly[2][1] + poly[3][1]) / 4
         if text in results:
             results[text].append((x, y))
-        else:
-            results[text] = [(x, y)]
-    res = result1[0]
-    for line in res:
-        text = line[1][0]
-        x = (line[0][0][0] + line[0][1][0] +
-             line[0][2][0] + line[0][3][0]) / 4
-        y = (line[0][0][1] + line[0][1][1] +
-             line[0][2][1] + line[0][3][1]) / 4
-        if text in results:
-            i = 0
-            for (x0, y0) in results[text]:
-                if (x0-x)**2 + (y0-y)**2 > 800:
-                    i += 1
-                else:
-                    break
-            if i == len(results[text]):
-                results[text].append((x, y))
-            else:
-                continue
         else:
             results[text] = [(x, y)]
     return results
@@ -1133,8 +1103,23 @@ def main():
     root.destroy()
     sys.exit()
 
+def _do_exit():
+    try:
+        root.destroy()
+    except:
+        pass
+    os._exit(0)
+
+def exit_program():
+    # 热键线程 -> 主线程
+    print('退出程序')
+    try:
+        root.after(0, _do_exit)
+    except:
+        os._exit(0)
+
+keyboard.add_hotkey('p', exit_program)
 
 main()
-
 
 root.mainloop()
