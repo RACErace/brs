@@ -1,6 +1,7 @@
 psutil
 pyautogui
 pyperclip
-paddleocr
-pywebview
+paddleocr == 3.1.0
+pywebview == 6.0
 tomlkit
+keyboard

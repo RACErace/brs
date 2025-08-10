@@ -90,22 +90,12 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass
         pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
         ```
         
-    - **您的机器安装的是CUDA 11，请运行以下命令安装**
-        ```sh
-        pip install paddlepaddle-gpu
-        
-        ```
+    - **参考[飞桨官网安装文档](https://www.paddlepaddle.org.cn/install/quick)中的说明安装PaddlePaddle**
 
-    - **您的机器是CPU，请运行以下命令安装**
-        ```sh
-        pip install paddlepaddle
-        
-        ```
 
 8. 安装依赖：
     ```sh
-    pip install -r requirements.txt
-    python setup.py
+    python -m pip install -r requirements.txt
     
     ```
 
